@@ -358,18 +358,22 @@ constexpr int encmem[0xb] = {
     };
 
 // リストを静的に生成する constexpr 関数
-auto gen_mon_list(int* list) {
+template<int size, int total = 0>
+constexpr auto gen_mon_list() {
+    constexpr int max_size = 100;  // 最大サイズ（encmem に合わせて調整）
+    std::array<int, max_size> list = {};  // std::array でリストを作成
+
     int counter = 0;
-    for (int i = 0; i < 0xb; ++i) {
-        if (encmem[i] == 0){
-            break;
-        }
+    for (int i = 0; i < size; ++i) {
         for (int j = 0; j < encmem[i]; ++j) {
             list[counter++] = i;
         }
     }
-    return counter;
+    return list;
 }
+
+// マクロでリストの生成を呼び出す
+#define GEN_MON_LIST(size) gen_mon_list<size>()
 
 
 int mon_list_couner = 0;
@@ -414,7 +418,11 @@ void processEnc() {
 //        std::cout << mon_list[i] << std::endl;
 //    }
 
-    std::cout << mon_list[randMain(mon_list_couner)] << std::endl;
+    constexpr auto list = GEN_MON_LIST(10);
+
+    // 外部で抽選処理
+    int result = list[randMain(100)];
+    std::cout << "抽選結果: " << result << std::endl;
     //0x0203558c
 
 }
@@ -431,7 +439,7 @@ int main() {
     auto t0 = std::chrono::high_resolution_clock::now();
     uint32_t base1 = 0x7e9056a0;
 
-    mon_list_couner = gen_mon_list(mon_list);
+    //mon_list_couner = gen_mon_list(mon_list);
 
     processEnc();
 
