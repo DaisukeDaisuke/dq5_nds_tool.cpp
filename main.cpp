@@ -354,8 +354,30 @@ constexpr int encmem[0xb] = {
         mem[DynamicOffset(7 * DynamicOffset(0xc) + 0x1c)],
         mem[DynamicOffset(8 * DynamicOffset(0xc) + 0x1c)],
         mem[DynamicOffset(9 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(10 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(0xc4)],
     };
+
+// リストを静的に生成する constexpr 関数
+auto gen_mon_list(int* list) {
+    int counter = 0;
+    for (int i = 0; i < 0xb; ++i) {
+        if (encmem[i] == 0){
+            break;
+        }
+        for (int j = 0; j < encmem[i]; ++j) {
+            list[counter++] = i;
+        }
+    }
+    return counter;
+}
+
+
+int mon_list_couner = 0;
+int mon_list[100];
+
+
+// マクロでリストの生成を呼び出す
+#define GEN_MON_LIST(size) gen_mon_list<size>()
 
 void processEnc() {
     memcpy(mem_active, mem, sizeof(mem_active));
@@ -379,18 +401,23 @@ void processEnc() {
     CONDITIONAL_ASSIGN(mem_active, mem, 0x90);
 
 
-    int size = 0;
-    for (int i = 0; i < 10; ++i) {
-        if (encmem[i] == 0){
-            break;
-        }
-        std::cout << encmem[i] << std::endl;
-        size = i;
-    }
+//    int size = 0;
+//    for (int i = 0; i < 10; ++i) {
+//        if (encmem[i] == 0){
+//            break;
+//        }
+//        std::cout << encmem[i] << std::endl;
+//        size = i;
+//    }
 
+//    for (int i = 0; i < mon_list_couner; ++i) {
+//        std::cout << mon_list[i] << std::endl;
+//    }
+
+    std::cout << mon_list[randMain(mon_list_couner)] << std::endl;
+    //0x0203558c
 
 }
-
 
 // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
 // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
@@ -403,6 +430,8 @@ int main() {
 
     auto t0 = std::chrono::high_resolution_clock::now();
     uint32_t base1 = 0x7e9056a0;
+
+    mon_list_couner = gen_mon_list(mon_list);
 
     processEnc();
 
