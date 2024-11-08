@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstdint>
 #include <chrono>
+#include <cassert>
+
 
 uint32_t randMain();
 
@@ -11,6 +13,8 @@ uint32_t modularInverse(uint32_t a, uint32_t m);
 uint32_t previousSeed(uint32_t currentSeed);
 
 uint32_t randMainRaw(uint32_t seed);
+
+#define DEBUG 1
 
 // LCGのパラメータ
 // LCGのパラメータ
@@ -165,10 +169,104 @@ std::vector<uint32_t> getPreviousSeeds(uint32_t currentSeed, int steps) {
     return seeds;
 }
 
+int position = 0;
+uint32_t NowSeed = 2208399859;
 
-//#define back 1
-//#define back2 1
-//#define back3 1
+
+int randMain(int max) {
+    assert(max > 0);
+    NowSeed = NowSeed * 0x5D588B65 + 0x269EC3;
+    auto tmp = NowSeed >> 0x10;
+    uint32_t result = (tmp * max) >> 0x10;
+#ifdef DEBUG
+    std::cout << position << ": " << std::hex << result << std::dec << std::endl;
+#endif
+    assert(result <= max);
+    return static_cast<int>(result);
+}
+
+inline void randInit(uint32_t seed) {
+    NowSeed = seed;
+}
+
+constexpr int getMemConst(int offset) {
+    switch (offset) {
+        case 0: return 1;
+        case 1: return 2;
+        case 2: return 3;
+        case 3: return 4;
+        case 8: return 8;
+        case 4: return randMain(2) + 1;  // 実行時に評価される
+        case 5: return randMain(2) + 2;  // 実行時に評価される
+        case 6: return randMain(3) + 2;  // 実行時に評価される
+        case 7: return randMain(4) + 4;  // 実行時に評価される
+        default: return 0;
+    }
+}
+
+
+constexpr uint32_t mem[40] = {
+        0x000d0016,
+        0x00000003,
+        0x00000001,
+        00000000,
+        00000000,
+        0x0000000a,
+        0x00000008,
+        0x00000002,
+        0x00000033,
+        0x00000003,
+        0x00000004,
+        0x00000034,
+        0x00000003,
+        0x00000004,
+        0x00000037,
+        0x00000003,
+        0x00000004,
+        0x0000002d,
+        0x00000002,
+        0x00000004,
+        0x00000028,
+        0x00000004,
+        0x00000002,
+        0x00000033,
+        0x00000006,
+        0x00000004,
+        0x00000034,
+        0x00000005,
+        0x00000004,
+        0x00000037,
+        0x00000005,
+        0x00000004,
+        0x0000002d,
+        0x00000004,
+        0x00000004,
+        0x000000de,
+        0x00000008,
+};
+
+template <size_t offset>
+constexpr size_t BYTE_OFFSET() {
+    static_assert((offset + 4) % 8 == 0, "Offset must be a multiple of 8");
+    return mem[(offset + 4) / 8];
+}
+
+void processEnc(){
+    bool tomadoi = false;
+    bool ikari = false;
+    if(randMain(0x20) == 0){
+        tomadoi = true;
+    }else if(randMain(0x20) == 0){
+        ikari = true;
+    }
+
+    int index = getMemConst(BYTE_OFFSET<0x24>());  // コンパイル成功: 0x24 は 8の倍数
+    //std::cout << index;
+
+}
+
+
+
 
 // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
 // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
@@ -178,194 +276,20 @@ std::vector<uint32_t> getPreviousSeeds(uint32_t currentSeed, int steps) {
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 int main() {
     auto t0 = std::chrono::high_resolution_clock::now();
-//
-//    uint32_t test1 = 0x7fa978ca - 0x1090123 - 0x102107;
-//    std::cout << std::hex << test1 << std::dec << std::endl;
-//
-    //uint32_t base1 = 0x7EA056A0;
     uint32_t base1 = 0x7e9056a0;
-////
-//    std::uint32_t encodedDate2 = encodeTime(8, 19, 10);
-//    std::cout << std::hex << encodedDate2 << std::endl;
-    //return 0;
-//    //2178380071, 2092/2/27 19:18:10, 0x327022e, 101859
 
-    for (int y = 2000; y < 2099; ++y) {
-        for (int m = 1; m < 12; ++m) {
-            for (int d = 0; d < 28; ++d) {
-                for (int h = 0; h < 24; ++h) {
-                    for (int min = 0; min < 60; ++min) {
-                        std::uint32_t encodedDate2 = encodeDate(y, m, d);
-                        std::uint32_t encodeTime2 = encodeTime(h, min, 10);
-                        uint32_t seed = base1 + encodedDate2 + encodeTime2;
-                        uint32_t slotStart = randMainJump(seed, 22);
-                        randInit(slotStart);
-                        int j = 0;
-                        for (; j < 5; ++j) {
-                            auto rand = randMain();
-                            if (rand != 0) {
-                                break;
-                            }
-                        }
-                        if (j == 5) {
-                            std::cout << seed << ", " << y << "/" << m << "/" << d << " " << h << ":" << min  << ":10"  << ", " << std::hex << "0x" << encodedDate2 << ", " << encodeTime2 << std::dec << std::endl;
-                            //return 0;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return 0;
+    processEnc();
 
-#ifdef back3
-    uint32_t base = 0x7EA056A0;
-    int year = 2024, month = 10, day = 10;
-    std::uint32_t encodedDate = encodeDate(year, month, day);
-    std::uint32_t encodeTime1 = encodeTime(17, 20, 57);
-    std::cout << "0x" << std::hex << std::setw(8) << std::setfill('0') << encodedDate << std::endl;
-    std::cout << "0x" << std::hex << std::setw(8) << std::setfill('0') << encodeTime1 << std::endl;
-#endif
+    auto t1 = std::chrono::high_resolution_clock::now();
+    auto elapsed_time =
+            std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
+    std::cout << "elapsed time: " << double(elapsed_time) / 1000 << " ms" << std::endl;
 
-#ifdef back2
-    // 初期シード
-    uint32_t seedA = 0x322F3F16;
-    uint32_t seedB = 0x4C8D3D2C;
-
-    // 過去に23回戻る
-    int steps = 23;
-    auto pastSeedsA = getPreviousSeeds(seedA, steps);
-    auto pastSeedsB = getPreviousSeeds(seedB, steps);
-
-    // 距離の最小ペアを求める
-    uint32_t minDistance = std::numeric_limits<uint32_t>::max();
-    uint32_t closestSeedA = 0, closestSeedB = 0;
-
-    for (size_t i = 18; i < pastSeedsA.size(); ++i) {
-        for (size_t j = 18; j < pastSeedsB.size(); ++j) {
-            uint32_t distance = std::abs(static_cast<int64_t>(pastSeedsA[i]) - static_cast<int64_t>(pastSeedsB[j]));
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestSeedA = pastSeedsA[i];
-                closestSeedB = pastSeedsB[j];
-            }
-        }
-    }
-
-    // 結果の表示
-    std::cout << "Closest seeds found with minimum distance:" << std::endl;
-    std::cout << "Seed A: 0x" << std::hex << closestSeedA << std::dec << " (steps back from initial seed A)" << std::endl;
-    std::cout << "Seed B: 0x" << std::hex << closestSeedB << std::dec << " (steps back from initial seed B)" << std::endl;
-    std::cout << "Minimum Distance: 0x" << std::hex << minDistance << std::dec << std::endl;
-
-#endif
-
-#ifdef back
-    // 初期パラメータ
-    //uint32_t initialSeed = 0x322f3f16;
-    //uint32_t initialSeed = 0x4c8d3d2c;
-    uint32_t initialSeed = 0x546cbb49;
-
-    //uint32_t test = 0x7fa978ca;
-    uint32_t test1 = 0x7fa978ca - 0x1090123 - 0x00102107;
-    std::cout << std::hex << test1 << std::dec << std::endl;
-
-
-    //ADBD4907
-    // 過去に20回〜23回戻る
-    int steps = 23;
-    auto pastSeeds = getPreviousSeeds(initialSeed, steps);
-
-    // 過去のシードを表示
-    std::cout << "Previous 20-23 seeds:" << std::endl;
-    for (int i = 0; i <= 25; ++i) {
-        std::cout << "Seed " << i << " steps back: 0x" << std::hex << pastSeeds[i] << std::dec << std::endl;
-    }
-
-#endif
-
-#ifndef back
-#ifndef back2
-#ifndef back3
-    //00-09-BF-6C-ED-92
-//    uint32_t test2[10] = {
-//        0x0,
-//        0x92ed0000 ^ 0,
-//        0x86000000 ^ (0x6cBF0900 ^ 0 ^ 6),
-//        0x30010102, //03061124 = 24-11-6 3???? 曜日
-//        0x00010000,//7-39-36 = 00363907
-//        0x0,
-//        0x0,
-//        0x00002fff,
-//    };
-//
-//    uint32_t collector = 0;
-//    for (int i = 0; i < 8; ++i) {
-//        collector += test2[i];
-//    }
-//    std::cout << collector << std::endl;
-
-    int size = 2;
-//    uint32_t input[500] = {
-//            2, 11, 3, 15, 9,
-//            9, 9, 15, 4, 11,
-//            8, 4, 12, 5, 7,
-//    };
-
-// リール1の5と14は同じ
-//    uint32_t input[500] = {
-//            14, 14, 3, 13, 6,
-//            9, 5, 1, 10, 15,
-//    };
-
-    uint32_t input[500] = {
-            3, 11, 5, 4, 9,
-            10, 14, 14, 12, 1,
-    };
-
-    //841957142
-
-    auto max = size * 5;
-    for (uint32_t couter = 0; couter < UINT32_MAX; couter++) {//UINT32_MAX
-        randInit(couter);
-        int j = 0;
-        for (; j < max; ++j) {
-            auto rand = randMain();
-            if (rand != input[j]){
-                break;
-            }
-        }
-        if (j == max){
-            std::cout << "0x" << std::hex << couter << std::dec << std::endl;
-        }
-    }
-
-
-#endif
-#endif
-#endif
-//
-//    auto t1 = std::chrono::high_resolution_clock::now();
-//    auto elapsed_time =
-//            std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
-//    std::cout << "elapsed time: " << double(elapsed_time) / 1000 << " ms" << std::endl;
-//
 
     return 0;
 }
 
-uint32_t NowSeed = 0x7079cffe;
 
-
-uint32_t randMain() {
-    NowSeed = NowSeed * 0x5D588B65 + 0x269EC3;
-    auto tmp = NowSeed >> 0x10;
-    return (tmp * 0x10) >> 0x10;
-}
-
-inline void randInit(uint32_t seed) {
-    NowSeed = seed;
-}
 
 // 拡張ユークリッド法を使用して逆元を求める
 uint32_t modularInverse(uint32_t a, uint64_t m) {
