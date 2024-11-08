@@ -14,7 +14,7 @@ uint32_t previousSeed(uint32_t currentSeed);
 
 uint32_t randMainRaw(uint32_t seed);
 
-#define DEBUG 1
+//#define DEBUG 1
 
 // LCGのパラメータ
 // LCGのパラメータ
@@ -104,7 +104,7 @@ uint32_t randMainJump(uint32_t seed, uint32_t N) {
 
 std::uint32_t encodeDate(int year1, int month, int day) {
     using namespace std::chrono;
-    if (year1 < 2000){
+    if (year1 < 2000) {
         throw std::out_of_range("Invalid Date input");
     }
 
@@ -144,9 +144,9 @@ std::uint32_t encodeTime(int hour, int minute, int second) {
     if (hour <= 11) {
         hour = div_day_adjust(hour);
         encodedTime |= hour;  // 時を24ビット左シフト
-    } else if(hour <= 19){
+    } else if (hour <= 19) {
         encodedTime |= (hour - 12 + 0x52);  // 20時から23時は0x60から始まる
-    }else{
+    } else {
         encodedTime |= (hour - 20 + 0x60);  // 20時から23時は0x60から始まる
     }
 
@@ -175,13 +175,15 @@ uint32_t NowSeed = 2208399859;
 
 int randMain(int max) {
     assert(max > 0);
+
     NowSeed = NowSeed * 0x5D588B65 + 0x269EC3;
     auto tmp = NowSeed >> 0x10;
     uint32_t result = (tmp * max) >> 0x10;
 #ifdef DEBUG
-    std::cout << position << ": " << std::hex << result << std::dec << std::endl;
+    std::cout << position << ": " << std::hex <<  max << "/" << result << std::dec << std::endl;
 #endif
-    assert(result <= max);
+    position++;
+    assert(result < max);
     return static_cast<int>(result);
 }
 
@@ -189,83 +191,147 @@ inline void randInit(uint32_t seed) {
     NowSeed = seed;
 }
 
-constexpr int getMemConst(int offset) {
+constexpr int getMemConst(uint32_t offset) {
     switch (offset) {
-        case 0: return 1;
-        case 1: return 2;
-        case 2: return 3;
-        case 3: return 4;
-        case 8: return 8;
-        case 4: return randMain(2) + 1;  // 実行時に評価される
-        case 5: return randMain(2) + 2;  // 実行時に評価される
-        case 6: return randMain(3) + 2;  // 実行時に評価される
-        case 7: return randMain(4) + 4;  // 実行時に評価される
-        default: return 0;
+        case 0:
+            return 0;
+        case 1:
+            return 1;
+        case 2:
+            return 2;
+        case 3:
+            return 3;
+        case 8:
+            return 8;
+        case 4:
+            return randMain(2) + 1;  // 実行時に評価される
+        case 5:
+            return randMain(2) + 2;  // 実行時に評価される
+        case 6:
+            return randMain(3) + 2;  // 実行時に評価される
+        case 7:
+            return randMain(4) + 4;  // 実行時に評価される
+        default:
+            return 0;
     }
 }
 
 
-constexpr uint32_t mem[40] = {
-        0x000d0016,
+constexpr int mem[75] = {
+        0x00000016,
+        0x0000000d,
         0x00000003,
+        00000000,
         0x00000001,
         00000000,
         00000000,
+        00000000,
+        00000000,
+        00000000,
         0x0000000a,
-        0x00000008,
+        00000000,
+        00000000,
+        00000000,
         0x00000002,
+        00000000,
         0x00000033,
+        00000000,
         0x00000003,
+        00000000,
         0x00000004,
+        00000000,
         0x00000034,
+        00000000,
         0x00000003,
+        00000000,
         0x00000004,
+        00000000,
         0x00000037,
+        00000000,
         0x00000003,
+        00000000,
         0x00000004,
+        00000000,
         0x0000002d,
+        00000000,
         0x00000002,
+        00000000,
         0x00000004,
+        00000000,
         0x00000028,
+        00000000,
         0x00000004,
+        00000000,
         0x00000002,
+        00000000,
         0x00000033,
+        00000000,
         0x00000006,
+        00000000,
         0x00000004,
+        00000000,
         0x00000034,
+        00000000,
         0x00000005,
+        00000000,
         0x00000004,
+        00000000,
         0x00000037,
+        00000000,
         0x00000005,
+        00000000,
         0x00000004,
+        00000000,
         0x0000002d,
+        00000000,
         0x00000004,
+        00000000,
         0x00000004,
+        00000000,
         0x000000de,
+        00000000,
         0x00000008,
+        00000000,
 };
+int mem_active[75] = {};
 
-template <size_t offset>
+
+template<size_t offset>
 constexpr size_t BYTE_OFFSET() {
-    static_assert((offset + 4) % 8 == 0, "Offset must be a multiple of 8");
-    return mem[(offset + 4) / 8];
+    static_assert((offset) % 2 == 0, "Offset must be a multiple of 8");
+    return ((offset) / 2);
 }
 
-void processEnc(){
+#define CONDITIONAL_ASSIGN(mem_active, mem, offset)             \
+    do {                                                        \
+        constexpr int byteOffset = BYTE_OFFSET<offset>();       \
+        int newValue = getMemConst(mem[byteOffset]);            \
+        if (mem[byteOffset] != 0&&mem[byteOffset] != 1&&mem[byteOffset] != 2&&mem[byteOffset] != 3&&mem[byteOffset] != 8) {                      \
+            mem_active[byteOffset] = newValue;                  \
+        }                                                       \
+    } while (0)
+
+void processEnc() {
+    memcpy(mem_active, mem, sizeof(mem_active));
     bool tomadoi = false;
     bool ikari = false;
-    if(randMain(0x20) == 0){
+    if (randMain(0x20) == 0) {
         tomadoi = true;
-    }else if(randMain(0x20) == 0){
+    } else if (randMain(0x20) == 0) {
         ikari = true;
     }
 
-    int index = getMemConst(BYTE_OFFSET<0x24>());  // コンパイル成功: 0x24 は 8の倍数
-    //std::cout << index;
-
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x24);
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x30);
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x3c);
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x48);
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x54);
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x60);
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x6c);
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x78);
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x84);
+    CONDITIONAL_ASSIGN(mem_active, mem, 0x90);
 }
-
-
 
 
 // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
@@ -275,6 +341,8 @@ void processEnc(){
 // TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 int main() {
+    std::cin.tie(0)->sync_with_stdio(0);
+
     auto t0 = std::chrono::high_resolution_clock::now();
     uint32_t base1 = 0x7e9056a0;
 
@@ -285,10 +353,10 @@ int main() {
             std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
     std::cout << "elapsed time: " << double(elapsed_time) / 1000 << " ms" << std::endl;
 
+    std::cout << position << std::endl;
 
     return 0;
 }
-
 
 
 // 拡張ユークリッド法を使用して逆元を求める
