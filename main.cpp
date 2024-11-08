@@ -217,7 +217,7 @@ constexpr int getMemConst(uint32_t offset) {
 }
 
 
-constexpr int mem[75] = {
+constexpr int mem[0x89] = {
         0x00000016,
         0x0000000d,
         0x00000003,
@@ -232,68 +232,97 @@ constexpr int mem[75] = {
         00000000,
         00000000,
         00000000,
-        0x00000002,
+        0x00000002, //14 = 0 * 0xc + 0x1c
         00000000,
         0x00000033,
         00000000,
         0x00000003,
         00000000,
-        0x00000004,
+        0x00000004, //20 = 1 * 0xc + 0x1c
         00000000,
         0x00000034,
         00000000,
         0x00000003,
         00000000,
-        0x00000004,
+        0x00000004,  //26 = 2 * 0xc + 0x1c
         00000000,
         0x00000037,
         00000000,
         0x00000003,
         00000000,
-        0x00000004,
+        0x00000004, //32 = 3 * 0xc + 0x1c
         00000000,
         0x0000002d,
         00000000,
         0x00000002,
         00000000,
-        0x00000004,
+        0x00000004, //38 = 4 * 0xc + 0x1c
         00000000,
         0x00000028,
         00000000,
         0x00000004,
         00000000,
-        0x00000002,
+        0x00000002, //44 = 5 * 0xc + 0x1c
         00000000,
         0x00000033,
         00000000,
         0x00000006,
         00000000,
-        0x00000004,
+        0x00000004, //50 = 6 * 0xc + 0x1c
         00000000,
         0x00000034,
         00000000,
         0x00000005,
         00000000,
-        0x00000004,
+        0x00000004, //56 = 7 * 0xc + 0x1c
         00000000,
         0x00000037,
         00000000,
         0x00000005,
         00000000,
-        0x00000004,
+        0x00000004, //62 = 8 * 0xc + 0x1c
         00000000,
         0x0000002d,
         00000000,
         0x00000004,
         00000000,
-        0x00000004,
+        0x00000004, //68 = 9 * 0xc + 0x1c
         00000000,
         0x000000de,
         00000000,
         0x00000008,
         00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
+        00000000,
 };
-int mem_active[75] = {};
+int mem_active[0x89] = {0};
 
 
 template<size_t offset>
@@ -301,6 +330,8 @@ constexpr size_t BYTE_OFFSET() {
     static_assert((offset) % 2 == 0, "Offset must be a multiple of 8");
     return ((offset) / 2);
 }
+
+#define DynamicOffset(X) (X / 2)
 
 #define CONDITIONAL_ASSIGN(mem_active, mem, offset)             \
     do {                                                        \
@@ -310,6 +341,21 @@ constexpr size_t BYTE_OFFSET() {
             mem_active[byteOffset] = newValue;                  \
         }                                                       \
     } while (0)
+
+
+constexpr int encmem[0xb] = {
+        mem[DynamicOffset(0 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(1 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(2 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(3 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(4 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(5 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(6 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(7 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(8 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(9 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(10 * DynamicOffset(0xc) + 0x1c)],
+    };
 
 void processEnc() {
     memcpy(mem_active, mem, sizeof(mem_active));
@@ -331,6 +377,18 @@ void processEnc() {
     CONDITIONAL_ASSIGN(mem_active, mem, 0x78);
     CONDITIONAL_ASSIGN(mem_active, mem, 0x84);
     CONDITIONAL_ASSIGN(mem_active, mem, 0x90);
+
+
+    int size = 0;
+    for (int i = 0; i < 10; ++i) {
+        if (encmem[i] == 0){
+            break;
+        }
+        std::cout << encmem[i] << std::endl;
+        size = i;
+    }
+
+
 }
 
 
