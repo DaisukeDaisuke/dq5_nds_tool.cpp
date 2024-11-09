@@ -14,13 +14,13 @@ uint32_t previousSeed(uint32_t currentSeed);
 
 uint32_t randMainRaw(uint32_t seed);
 
-//#define DEBUG 1
+#define DEBUG 1
 
 // LCGのパラメータ
 // LCGのパラメータ
 const uint32_t MULTIPLIER = 0x5D588B65;
 const uint32_t INCREMENT = 0x269EC3;
-const uint64_t MODULUS = static_cast<uint64_t>(0xFFFFFFFF) + 1;  // オーバーフロー防止のため64ビットで計算
+const uint64_t MODULUS = static_cast<uint64_t>(static_cast<uint64_t>(0xffffffff)) + 1;  // オーバーフロー防止のため64ビットで計算
 
 const uint64_t a_powers[100] = {1566083941, 2203506137, 1324822941, 1986974193, 2643373845, 1922267721, 3584877005,
                                 1128752353, 3108566981, 1963571129, 3492736765, 2923407569, 1151276405, 1419902505,
@@ -217,7 +217,7 @@ constexpr int getMemConst(uint32_t offset) {
 }
 
 
-constexpr int mem[0x89] = {
+constexpr int mem[0xf8] = {
         0x00000016,
         0x0000000d,
         0x00000003,
@@ -322,7 +322,7 @@ constexpr int mem[0x89] = {
         00000000,
         00000000,
 };
-int mem_active[0x89] = {0};
+int mem_active[0xf8] = {0};
 
 
 template<size_t offset>
@@ -331,7 +331,8 @@ constexpr size_t BYTE_OFFSET() {
     return ((offset) / 2);
 }
 
-#define DynamicOffset(X) (X / 2)
+#define DynamicOffset(X) ((X) / 2)
+#define CheckDynamicOffset(X) (assert((X) % 2 == 0))
 
 #define CONDITIONAL_ASSIGN(mem_active, mem, offset)             \
     do {                                                        \
@@ -344,44 +345,137 @@ constexpr size_t BYTE_OFFSET() {
 
 
 constexpr int encmem[0xb] = {
-        mem[DynamicOffset(0 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(1 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(2 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(3 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(4 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(5 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(6 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(7 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(8 * DynamicOffset(0xc) + 0x1c)],
-        mem[DynamicOffset(9 * DynamicOffset(0xc) + 0x1c)],
+        mem[DynamicOffset(0 * 0xc + 0x1c)],
+        mem[DynamicOffset(1 * 0xc + 0x1c)],
+        mem[DynamicOffset(2 * 0xc + 0x1c)],
+        mem[DynamicOffset(3 * 0xc + 0x1c)],
+        mem[DynamicOffset(4 * 0xc + 0x1c)],
+        mem[DynamicOffset(5 * 0xc + 0x1c)],
+        mem[DynamicOffset(6 * 0xc + 0x1c)],
+        mem[DynamicOffset(7 * 0xc + 0x1c)],
+        mem[DynamicOffset(8 * 0xc + 0x1c)],
+        mem[DynamicOffset(9 * 0xc + 0x1c)],
         mem[DynamicOffset(0xc4)],
-    };
+};
 
-// リストを静的に生成する constexpr 関数
-template<int size, int total = 0>
+// リストを静的に生成し、要素数カウンタも返す constexpr 関数
+template<int size>
 constexpr auto gen_mon_list() {
     constexpr int max_size = 100;  // 最大サイズ（encmem に合わせて調整）
     std::array<int, max_size> list = {};  // std::array でリストを作成
-
     int counter = 0;
+
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < encmem[i]; ++j) {
             list[counter++] = i;
         }
     }
-    return list;
+
+    return std::make_pair(list, counter);  // 配列とカウンタのペアを返す
 }
 
-// マクロでリストの生成を呼び出す
+constexpr int encmem1G[4] = {3, 0, 0, 2};//FUN_020356a8_read_enc2
+
+template<int size>
+constexpr auto gen_mon_list1G() {
+    constexpr int max_size = 100;  // 最大サイズ（encmem に合わせて調整）
+    std::array<int, max_size> list = {};  // std::array でリストを作成
+    int counter = 0;
+
+    for (int i = 0; i < size; ++i) {
+        if (encmem1G[i] == 0) {
+            break;
+        }
+        for (int j = 0; j < encmem1G[i]; ++j) {
+            list[counter++] = i;
+        }
+    }
+
+    return std::make_pair(list, counter);  // 配列とカウンタのペアを返す
+}
+
+// マクロでリストとサイズを生成
 #define GEN_MON_LIST(size) gen_mon_list<size>()
+#define GEN_MON_LIST1G(size) gen_mon_list1G<size>()
+
+// グローバルスコープでリストとサイズを生成
+constexpr auto mon_data = GEN_MON_LIST(10);
+constexpr auto &mon_list = mon_data.first;
+constexpr int mon_size = mon_data.second;
+
+constexpr auto mon_data1G = GEN_MON_LIST1G(3);
+constexpr auto &mon_list1G = mon_data1G.first;
+constexpr int mon_size1G = mon_data1G.second;
 
 
-int mon_list_couner = 0;
-int mon_list[100];
+constexpr auto mon_dataOtomo = GEN_MON_LIST(5);
+constexpr auto &mon_list_Otomo = mon_dataOtomo.first;
+constexpr int mon_sizeO_tomo = mon_dataOtomo.second;
 
 
-// マクロでリストの生成を呼び出す
-#define GEN_MON_LIST(size) gen_mon_list<size>()
+constexpr int64_t enc_walk[0x1f] = {
+        0xfffffb57 - 0xffffffffLL,
+        0xfffffc2a - 0xffffffffLL,
+        0xfffffcb4 - 0xffffffffLL,
+        0xfffffd1f - 0xffffffffLL,
+        0xfffffd79 - 0xffffffffLL,
+        0xfffffdc8 - 0xffffffffLL,
+        0xfffffe0f - 0xffffffffLL,
+        0xfffffe50 - 0xffffffffLL,
+        0xfffffe8d - 0xffffffffLL,
+        0xfffffec7 - 0xffffffffLL,
+        0xfffffefe - 0xffffffffLL,
+        0xffffff34 - 0xffffffffLL,
+        0xffffff68 - 0xffffffffLL,
+        0xffffff9b - 0xffffffffLL,
+        0xffffffcd - 0xffffffffLL,
+        0,
+        0x00000032,
+        0x00000064,
+        0x00000097,
+        0x000000cb,
+        0x00000101,
+        0x00000138,
+        0x00000172,
+        0x000001af,
+        0x000001f0,
+        0x00000237,
+        0x00000286,
+        0x000002e0,
+        0x0000034b,
+        0x000003d5,
+        0x000004a8,
+};
+
+bool FUN_02035740(int param2, int param3) {
+    auto counter = 0;
+    auto param1Counter = 0;
+    do {
+        if (counter < param3) {
+            auto int_couner = mem_active[DynamicOffset(param1Counter + 0xec)];
+            if(int_couner == 0){
+                auto var2 = counter << 1;
+                CheckDynamicOffset(var2 + 0xe4);
+                CheckDynamicOffset(param2 * 0xc + 0x2);
+                CheckDynamicOffset(var2 + 0xec);
+                CheckDynamicOffset(var2 + 0xf4);
+                CheckDynamicOffset(var2 + 0xf4);
+                mem_active[DynamicOffset(var2 + 0xe4)] = mem_active[DynamicOffset(param2 * 0xc + 0x20)];
+                mem_active[DynamicOffset(var2 + 0xec)] = mem_active[DynamicOffset(var2 + 0xec)] + 1;
+                mem_active[DynamicOffset(var2 + 0xf4)] = param2;
+                return true;
+            }
+            if(param2 == mem_active[DynamicOffset(param1Counter + 0xf4)]&&int_couner < (mem_active[DynamicOffset(param2 * 0xc + 0x24)] & 0xffff)){
+                auto var2 = counter << 1;
+                mem_active[DynamicOffset(0xec + var2 * 2)] = mem_active[DynamicOffset(0xec + var2 * 2)] + 1;
+                return true;
+            }
+        }
+        counter++;
+        param1Counter += 2;
+    } while (4 > counter);
+    return false;
+}
 
 void processEnc() {
     memcpy(mem_active, mem, sizeof(mem_active));
@@ -403,29 +497,45 @@ void processEnc() {
     CONDITIONAL_ASSIGN(mem_active, mem, 0x78);
     CONDITIONAL_ASSIGN(mem_active, mem, 0x84);
     CONDITIONAL_ASSIGN(mem_active, mem, 0x90);
-
-
-//    int size = 0;
-//    for (int i = 0; i < 10; ++i) {
-//        if (encmem[i] == 0){
-//            break;
-//        }
-//        std::cout << encmem[i] << std::endl;
-//        size = i;
-//    }
-
-//    for (int i = 0; i < mon_list_couner; ++i) {
-//        std::cout << mon_list[i] << std::endl;
-//    }
-
-    constexpr auto list = GEN_MON_LIST(10);
-
-    // 外部で抽選処理
-    int result = list[randMain(100)];
-    std::cout << "抽選結果: " << result << std::endl;
     //0x0203558c
+    auto rand = randMain(mon_size);
+    int selected = mon_list[rand];
+    mem_active[DynamicOffset(0x18)] = selected;
+
+
+    if (selected == 10) {
+        // FUN_02035598
+        //todo 拡張データーロード
+    } else if (selected > 4 && selected < 10) {
+        //FUN_0203562c
+        mem_active[DynamicOffset(0xe4)] = mem_active[DynamicOffset(selected * 0xc + 0x20)];
+        mem_active[DynamicOffset(0xec)] = mem_active[DynamicOffset(selected * 0xc + 0x24)];
+#ifdef DEBUG
+        mem_active[DynamicOffset(0xe6)] = 0;
+        mem_active[DynamicOffset(0xee)] = 0;
+        mem_active[DynamicOffset(0xe8)] = 0;
+        mem_active[DynamicOffset(0xf0)] = 0;
+        mem_active[DynamicOffset(0xea)] = 0;
+        mem_active[DynamicOffset(0xf2)] = 0;
+#endif
+    } else if (selected < 5) {
+        //FUN_0203567c 0203567c
+        //todo
+
+        // FUN_020356a8_read_enc2
+        auto rand1 = randMain(mon_size1G);
+        auto test = mon_list1G[rand1] + 2;
+        while (FUN_02035740(selected, test)){
+            auto rand2 = randMain(mon_sizeO_tomo);
+            selected = mon_list_Otomo[rand2];
+        }
+
+    }
+
 
 }
+
+int stepCounter = 0;
 
 // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
 // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
@@ -442,13 +552,28 @@ int main() {
     //mon_list_couner = gen_mon_list(mon_list);
 
     processEnc();
+    stepCounter = 0x1e00;
+    auto rand = randMain(31);
+    stepCounter += static_cast<int>(enc_walk[rand]);
+
+    int counter = 0;
+    while (stepCounter >= 0) {
+        processEnc();
+        stepCounter -= 529;
+        counter++;
+        if (counter == 2) {
+            break;
+        }
+    }
+
+    std::cout << "step: " << std::hex << stepCounter << std::dec << std::endl;
 
     auto t1 = std::chrono::high_resolution_clock::now();
     auto elapsed_time =
             std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
     std::cout << "elapsed time: " << double(elapsed_time) / 1000 << " ms" << std::endl;
 
-    std::cout << position << std::endl;
+    std::cout << "pos: " << position << std::endl;
 
     return 0;
 }
