@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cassert>
 
+#define DEBUG 1
 
 uint32_t randMain();
 
@@ -14,7 +15,6 @@ uint32_t previousSeed(uint32_t currentSeed);
 
 uint32_t randMainRaw(uint32_t seed);
 
-#define DEBUG 1
 
 // LCGのパラメータ
 // LCGのパラメータ
@@ -170,7 +170,7 @@ std::vector<uint32_t> getPreviousSeeds(uint32_t currentSeed, int steps) {
 }
 
 int position = 0;
-uint32_t NowSeed = 2208399859;
+uint32_t NowSeed = 0;
 
 
 int randMain(int max) {
@@ -180,7 +180,7 @@ int randMain(int max) {
     auto tmp = NowSeed >> 0x10;
     uint32_t result = (tmp * max) >> 0x10;
 #ifdef DEBUG
-    std::cout << position << ": " << std::hex <<  max << "/" << result << std::dec << std::endl;
+    std::cout << position << ": " << std::hex << max << "/" << result << std::dec << std::endl;
 #endif
     position++;
     assert(result < max);
@@ -189,6 +189,7 @@ int randMain(int max) {
 
 inline void randInit(uint32_t seed) {
     NowSeed = seed;
+    position = 0;
 }
 
 constexpr int getMemConst(uint32_t offset) {
@@ -453,7 +454,7 @@ bool FUN_02035740(int param2, int param3) {
     do {
         if (counter < param3) {
             auto int_couner = mem_active[DynamicOffset(param1Counter + 0xec)];
-            if(int_couner == 0){
+            if (int_couner == 0) {
                 auto var2 = counter << 1;
                 CheckDynamicOffset(var2 + 0xe4);
                 CheckDynamicOffset(param2 * 0xc + 0x2);
@@ -464,10 +465,13 @@ bool FUN_02035740(int param2, int param3) {
                 mem_active[DynamicOffset(var2 + 0xec)] = mem_active[DynamicOffset(var2 + 0xec)] + 1; // モンスター数
                 mem_active[DynamicOffset(var2 + 0xf4)] = param2;
                 return true;
-            }
-            if(param2 == mem_active[DynamicOffset(param1Counter + 0xf4)]&&int_couner < (mem_active[DynamicOffset(param2 * 0xc + 0x24)] & 0xffff)){
+            }//45 = 3
+            auto pre = mem_active[DynamicOffset(param1Counter + 0xf4)];
+            auto count1 = (mem_active[DynamicOffset(param2 * 0xc + 0x24)] & 0xffff);
+            if (param2 == pre &&
+                int_couner < count1) {
                 auto var2 = counter << 1;
-                mem_active[DynamicOffset(0xec + var2 * 2)] = mem_active[DynamicOffset(0xec + var2 * 2)] + 1;
+                mem_active[DynamicOffset(0xec + var2)] = mem_active[DynamicOffset(0xec + var2)] + 1;
                 return true;
             }
         }
@@ -477,10 +481,16 @@ bool FUN_02035740(int param2, int param3) {
     return false;
 }
 
+bool tomadoi = false;
+bool ikari = false;
+
 void processEnc() {
+    if (position == 141) {
+        std::cout << "!!" << std::endl;
+    }
     memcpy(mem_active, mem, sizeof(mem_active));
-    bool tomadoi = false;
-    bool ikari = false;
+    tomadoi = false;
+    ikari = false;
     if (randMain(0x20) == 0) {
         tomadoi = true;
     } else if (randMain(0x20) == 0) {
@@ -525,7 +535,7 @@ void processEnc() {
         // FUN_020356a8_read_enc2
         auto rand1 = randMain(mon_size1G);
         auto test = mon_list1G[rand1] + 2;
-        while (FUN_02035740(selected, test)){
+        while (FUN_02035740(selected, test)) {
             auto rand2 = randMain(mon_sizeO_tomo);
             selected = mon_list_Otomo[rand2];
         }
@@ -536,6 +546,52 @@ void processEnc() {
 }
 
 int stepCounter = 0;
+
+bool EmulationMain(uint32_t seed) {
+    randInit(seed);
+    processEnc();
+    auto tmptomadai = tomadoi;
+    stepCounter = 0x1e00;
+    auto rand = randMain(31);
+    stepCounter += static_cast<int>(enc_walk[rand]);
+
+    int counter = 0;
+    while (stepCounter >= 0) {
+        processEnc();
+        stepCounter -= 529;
+        counter++;
+#ifdef DEBUG
+        std::cout << "=======" << std::endl;
+#endif
+    }
+
+    processEnc();
+    processEnc();
+
+    auto enc1GId = mem_active[DynamicOffset(0xe4)];
+    auto enc1GCount = mem_active[DynamicOffset(0xec)];
+
+    auto enc2GId = mem_active[DynamicOffset(0xe4 + 1 * 2)];
+    auto enc2GCount = mem_active[DynamicOffset(0xec + 1 * 2)];
+
+    auto enc3GId = mem_active[DynamicOffset(0xe4 + 2 * 2)];
+    auto enc3GCount = mem_active[DynamicOffset(0xec + 2 * 2)];
+    if (tmptomadai && enc1GId == 45 && enc1GCount == 2 && enc2GId == 45 &&
+        enc2GCount == 1) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2
+        return true;
+    }
+    return false;
+}
+
+
+const uint64_t aN1 = 1697460069;
+const uint64_t cSum1 = 70898115;
+
+// LCGで86785ステップ先の乱数を計算
+uint32_t randMainJump86785(uint32_t seed) {
+    return static_cast<uint32_t>((aN1 * seed + cSum1) % MODULUS);
+}
+
 
 // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
 // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
@@ -551,30 +607,62 @@ int main() {
 
     //mon_list_couner = gen_mon_list(mon_list);
 
-    processEnc();
-    stepCounter = 0x1e00;
-    auto rand = randMain(31);
-    stepCounter += static_cast<int>(enc_walk[rand]);
 
-    int counter = 0;
-    while (stepCounter >= 0) {
-        processEnc();
-        stepCounter -= 529;
-        counter++;
-        std::cout << "=======" << std::endl;
+    //a^86785 % MODULUS = 1697460069
+    //c * (a^86784 + ... + 1) % MODULUS = 70898115
+/*    const uint32_t N = 86785;
+
+    // 計算1: a^N % MODULUS
+    uint64_t aN = modExp(MULTIPLIER, N, MODULUS);
+    printf("a^86785 %% MODULUS = %llu\n", aN);
+
+    // 計算2: c * (a^(N-1) + a^(N-2) + ... + 1) % MODULUS
+    uint64_t sum = 0;
+    uint64_t factor = 1;
+    for (uint32_t i = 0; i < N; ++i) {
+        sum = (sum + factor) % MODULUS;
+        factor = (factor * MULTIPLIER) % MODULUS;
     }
+    uint64_t cSum = (sum * INCREMENT) % MODULUS;
+    printf("c * (a^86784 + ... + 1) %% MODULUS = %llu\n", cSum);*/
 
-    processEnc();
-    processEnc();
 
+#ifndef DEBUG
+    for (int y = 2000; y < 2099; ++y) {
+        for (int m = 1; m < 12; ++m) {
+            for (int d = 0; d < 28; ++d) {
+                for (int h = 0; h < 24; ++h) {
+                    for (int min = 0; min < 60; ++min) {
+                        std::uint32_t encodedDate2 = encodeDate(y, m, d);
+                        std::uint32_t encodeTime2 = encodeTime(h, min, 10);
+                        uint32_t seed = base1 + encodedDate2 + encodeTime2;
+                        if (EmulationMain(seed)) {
+                            std::cout << seed << std::endl;
+                        }
+                    }
+                }
+            }
+        }
+    }
+#else
+    EmulationMain(2208341234);
+    NowSeed = randMainJump86785(NowSeed);
     std::cout << std::dec << mem_active[DynamicOffset(0xe4)] << "," << mem_active[DynamicOffset(0xec)] << std::endl;
-
-    std::cout << "step: " << std::hex << stepCounter << std::dec << std::endl;
-
+    std::cout << std::dec << mem_active[DynamicOffset(0xe4 + 1 * 2)] << "," << mem_active[DynamicOffset(0xec + 1 * 2)]
+              << std::endl;
+    std::cout << std::dec << mem_active[DynamicOffset(0xe4 + 2 * 2)] << "," << mem_active[DynamicOffset(0xec + 2 * 2)]
+              << std::endl;
+    std::cout << std::dec << mem_active[DynamicOffset(0xe4 + 3 * 2)] << "," << mem_active[DynamicOffset(0xec + 3 * 2)]
+              << std::endl;
+#endif
     auto t1 = std::chrono::high_resolution_clock::now();
     auto elapsed_time =
             std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
     std::cout << "elapsed time: " << double(elapsed_time) / 1000 << " ms" << std::endl;
+
+
+    std::cout << "step: " << std::hex << stepCounter << std::dec << std::endl;
+
 
     std::cout << "pos: " << position << std::endl;
 
