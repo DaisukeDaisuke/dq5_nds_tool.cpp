@@ -460,8 +460,8 @@ bool FUN_02035740(int param2, int param3) {
                 CheckDynamicOffset(var2 + 0xec);
                 CheckDynamicOffset(var2 + 0xf4);
                 CheckDynamicOffset(var2 + 0xf4);
-                mem_active[DynamicOffset(var2 + 0xe4)] = mem_active[DynamicOffset(param2 * 0xc + 0x20)];
-                mem_active[DynamicOffset(var2 + 0xec)] = mem_active[DynamicOffset(var2 + 0xec)] + 1;
+                mem_active[DynamicOffset(var2 + 0xe4)] = mem_active[DynamicOffset(param2 * 0xc + 0x20)]; // モンスター id
+                mem_active[DynamicOffset(var2 + 0xec)] = mem_active[DynamicOffset(var2 + 0xec)] + 1; // モンスター数
                 mem_active[DynamicOffset(var2 + 0xf4)] = param2;
                 return true;
             }
@@ -508,8 +508,8 @@ void processEnc() {
         //todo 拡張データーロード
     } else if (selected > 4 && selected < 10) {
         //FUN_0203562c
-        mem_active[DynamicOffset(0xe4)] = mem_active[DynamicOffset(selected * 0xc + 0x20)];
-        mem_active[DynamicOffset(0xec)] = mem_active[DynamicOffset(selected * 0xc + 0x24)];
+        mem_active[DynamicOffset(0xe4)] = mem_active[DynamicOffset(selected * 0xc + 0x20)]; // モンスターid
+        mem_active[DynamicOffset(0xec)] = mem_active[DynamicOffset(selected * 0xc + 0x24)]; // モンスター数
 #ifdef DEBUG
         mem_active[DynamicOffset(0xe6)] = 0;
         mem_active[DynamicOffset(0xee)] = 0;
@@ -561,10 +561,13 @@ int main() {
         processEnc();
         stepCounter -= 529;
         counter++;
-        if (counter == 2) {
-            break;
-        }
+        std::cout << "=======" << std::endl;
     }
+
+    processEnc();
+    processEnc();
+
+    std::cout << std::dec << mem_active[DynamicOffset(0xe4)] << "," << mem_active[DynamicOffset(0xec)] << std::endl;
 
     std::cout << "step: " << std::hex << stepCounter << std::dec << std::endl;
 
