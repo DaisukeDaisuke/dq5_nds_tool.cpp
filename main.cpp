@@ -4,7 +4,7 @@
 #include <cassert>
 #include <unordered_set>
 
-//#define DEBUG 1
+#define DEBUG 1
 
 uint32_t randMain();
 
@@ -219,10 +219,14 @@ constexpr int getMemConst(uint32_t offset) {
     }
 }
 
+const int PER_STEP = 384;
+
+constexpr int encmem1G[4] = {3, 0, 0, 2};//FUN_020356a8_read_enc2
+
 
 constexpr int mem[0xf8] = {
-        0x00000016,
-        0x0000000d,
+        0x00000014,
+        0x0000000c,
         0x00000003,
         00000000,
         0x00000001,
@@ -233,67 +237,67 @@ constexpr int mem[0xf8] = {
         00000000,
         0x0000000a,
         00000000,
-        00000000,
-        00000000,
-        0x00000002, //14 = 0 * 0xc + 0x1c
-        00000000,
-        0x00000033,
-        00000000,
-        0x00000003,
-        00000000,
-        0x00000004, //20 = 1 * 0xc + 0x1c
-        00000000,
-        0x00000034,
-        00000000,
-        0x00000003,
-        00000000,
-        0x00000004,  //26 = 2 * 0xc + 0x1c
-        00000000,
-        0x00000037,
-        00000000,
-        0x00000003,
-        00000000,
-        0x00000004, //32 = 3 * 0xc + 0x1c
-        00000000,
-        0x0000002d,
-        00000000,
-        0x00000002,
-        00000000,
-        0x00000004, //38 = 4 * 0xc + 0x1c
-        00000000,
-        0x00000028,
+        0x00000004,
         00000000,
         0x00000004,
         00000000,
-        0x00000002, //44 = 5 * 0xc + 0x1c
+        0x00000031,
         00000000,
-        0x00000033,
+        0x00000003,
+        00000000,
+        0x00000004,
+        00000000,
+        0x00000029,
+        00000000,
+        0x00000003,
+        00000000,
+        0x00000005,
+        00000000,
+        0x00000003,
+        00000000,
+        0x00000005,
+        00000000,
+        0x00000005,
+        00000000,
+        0x00000030,
+        00000000,
+        0x00000003,
+        00000000,
+        0x00000004,
+        00000000,
+        0x0000002b,
+        00000000,
+        0x00000003,
+        00000000,
+        0x00000004,
+        00000000,
+        0x00000031,
         00000000,
         0x00000006,
         00000000,
-        0x00000004, //50 = 6 * 0xc + 0x1c
+        0x00000004,
         00000000,
-        0x00000034,
+        0x00000029,
         00000000,
-        0x00000005,
+        0x00000006,
         00000000,
-        0x00000004, //56 = 7 * 0xc + 0x1c
+        0x00000003,
         00000000,
-        0x00000037,
+        0x00000003,
         00000000,
-        0x00000005,
-        00000000,
-        0x00000004, //62 = 8 * 0xc + 0x1c
-        00000000,
-        0x0000002d,
+        0x00000007,
         00000000,
         0x00000004,
         00000000,
-        0x00000004, //68 = 9 * 0xc + 0x1c
+        0x0000002e,
         00000000,
-        0x000000de,
+        0x00000006,
         00000000,
-        0x00000008,
+        0x00000003,
+        00000000,
+        0x00000030,
+        00000000,
+        0x00000006,
         00000000,
         00000000,
         00000000,
@@ -377,7 +381,6 @@ constexpr auto gen_mon_list() {
     return std::make_pair(list, counter);  // 配列とカウンタのペアを返す
 }
 
-constexpr int encmem1G[4] = {3, 0, 0, 2};//FUN_020356a8_read_enc2
 
 template<int size>
 constexpr auto gen_mon_list1G() {
@@ -494,7 +497,7 @@ void processEnc() {
     if (randMain(0x20) == 0) {
         tomadoi = true;
     } else {
-        randMain(0x20);
+        randMain(4);
     }
 
     CONDITIONAL_ASSIGN(mem_active, mem, 0x24);
@@ -557,9 +560,9 @@ const uint64_t cSum1 = 1255585536;
 
 int stepCounter = 0;
 
+
 bool EmulationMain(uint32_t seed) {
     randInit(seed);
-    processEnc();
     stepCounter = 0x1e00;
     auto rand = randMain(31);
     stepCounter += static_cast<int>(enc_walk[rand]);
@@ -567,7 +570,7 @@ bool EmulationMain(uint32_t seed) {
     int counter = 0;
     while (stepCounter >= 0) {
         processEnc();
-        stepCounter -= 529;
+        stepCounter -= PER_STEP;
         counter++;
 #ifdef DEBUG
         std::cout << "=======" << std::endl;
@@ -597,7 +600,7 @@ bool EmulationMain(uint32_t seed) {
         randMain(0x20);
     }
 
-    if (tomadoi && enc1GId == 45 && enc1GCount == 2 && enc2GId == 0) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
+    if (tomadoi && enc1GId == 0x31) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
         return true;
     }
     return false;
@@ -642,6 +645,19 @@ int main() {
 
 
 #ifndef DEBUG
+
+    /*
+    id:0, 31
+    id:1, 29
+    id:2, 3
+    id:3, 30
+    id:4, 2b
+    id:5, 31
+    id:6, 29
+    id:7, 3
+    id:8, 2e
+    id:9, 30
+ */
     for (int y = 2000; y < 2099; ++y) {
         for (int m = 1; m < 12; ++m) {
             for (int d = 0; d < 28; ++d) {
@@ -654,6 +670,7 @@ int main() {
                             known_values.insert(seed);
                             if (EmulationMain(seed)) {
                                 std::cout << seed << ", " << y << "/" << m << "/" << d << " " << h << ":" << min  << ":10"  << ", " << std::hex << "0x" << encodedDate2 << ", " << encodeTime2 << std::dec << std::endl;
+                                return 0;
                             }
                         }
                     }
@@ -662,7 +679,13 @@ int main() {
         }
     }
 #else
-    EmulationMain(2225166851);
+    EmulationMain(2208329120);
+
+
+//    for (int i = 0; i < 10; ++i) {
+//        std::cout << "id:" << i << ", " << std::hex << mem[DynamicOffset(i * 0xc + 0x20)]  << std::dec << std::endl;
+//    }
+
 
     std::cout << std::dec << mem_active[DynamicOffset(0xe4)] << "," << mem_active[DynamicOffset(0xec)] << std::endl;
     std::cout << std::dec << mem_active[DynamicOffset(0xe4 + 1 * 2)] << "," << mem_active[DynamicOffset(0xec + 1 * 2)]
