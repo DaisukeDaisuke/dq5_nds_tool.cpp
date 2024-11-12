@@ -1,9 +1,15 @@
 cmake_minimum_required(VERSION 3.30)
 project(dq5_ds_rands)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
-add_executable(dq5_ds_rands main.cpp)
+add_executable(dq5_ds_rands main.cpp
+        Lcg.cpp
+        Lcg.h
+        debug.h
+        DeteUtility.cpp
+        DeteUtility.h
+)
 
 if(MINGW)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -march=x86-64 -mtune=generic ")
