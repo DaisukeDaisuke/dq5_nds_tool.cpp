@@ -4,7 +4,7 @@
 #include <cassert>
 #include <unordered_set>
 
-#define DEBUG 1
+//#define DEBUG 1
 
 uint32_t randMain();
 
@@ -237,7 +237,7 @@ constexpr int mem[0xf8] = {
         00000000,
         0x0000000a,
         00000000,
-        0x00000004,
+        0x00000009,
         00000000,
         0x00000004,
         00000000,
@@ -328,6 +328,9 @@ constexpr int mem[0xf8] = {
         00000000,
         00000000,
         00000000,
+
+
+
 };
 int mem_active[0xf8] = {0};
 
@@ -420,21 +423,21 @@ constexpr int mon_sizeO_tomo = mon_dataOtomo.second;
 
 
 constexpr int64_t enc_walk[0x1f] = {
-        0xfffffb57 - 0xffffffffLL,
-        0xfffffc2a - 0xffffffffLL,
-        0xfffffcb4 - 0xffffffffLL,
-        0xfffffd1f - 0xffffffffLL,
-        0xfffffd79 - 0xffffffffLL,
-        0xfffffdc8 - 0xffffffffLL,
-        0xfffffe0f - 0xffffffffLL,
-        0xfffffe50 - 0xffffffffLL,
-        0xfffffe8d - 0xffffffffLL,
-        0xfffffec7 - 0xffffffffLL,
-        0xfffffefe - 0xffffffffLL,
-        0xffffff34 - 0xffffffffLL,
-        0xffffff68 - 0xffffffffLL,
-        0xffffff9b - 0xffffffffLL,
-        0xffffffcd - 0xffffffffLL,
+        0xfffffb57 - 0xffffffffLL - 1,
+        0xfffffc2a - 0xffffffffLL - 1,
+        0xfffffcb4 - 0xffffffffLL - 1,
+        0xfffffd1f - 0xffffffffLL - 1,
+        0xfffffd79 - 0xffffffffLL - 1,
+        0xfffffdc8 - 0xffffffffLL - 1,
+        0xfffffe0f - 0xffffffffLL - 1,
+        0xfffffe50 - 0xffffffffLL - 1,
+        0xfffffe8d - 0xffffffffLL - 1,
+        0xfffffec7 - 0xffffffffLL - 1,
+        0xfffffefe - 0xffffffffLL - 1,
+        0xffffff34 - 0xffffffffLL - 1,
+        0xffffff68 - 0xffffffffLL - 1,
+        0xffffff9b - 0xffffffffLL - 1,
+        0xffffffcd - 0xffffffffLL - 1,
         0,
         0x00000032,
         0x00000064,
@@ -459,6 +462,8 @@ bool FUN_02035740(int param2, int param3) {
     do {
         if (counter < param3) {
             auto int_couner = mem_active[DynamicOffset(param1Counter + 0xec)];
+            auto pre = mem_active[DynamicOffset(param1Counter + 0xf4)];
+            auto count1 = (mem_active[DynamicOffset(param2 * 0xc + 0x24)] & 0xffff);
             if (int_couner == 0) {
                 auto var2 = counter << 1;
                 CheckDynamicOffset(var2 + 0xe4);
@@ -471,9 +476,8 @@ bool FUN_02035740(int param2, int param3) {
                 mem_active[DynamicOffset(var2 + 0xf4)] = param2;
                 return true;
             }//45 = 3
-            auto pre = mem_active[DynamicOffset(param1Counter + 0xf4)];
-            auto count1 = (mem_active[DynamicOffset(param2 * 0xc + 0x24)] & 0xffff);
-            if (param2 == pre &&
+
+            if (int_couner != 0&param2 == pre &&
                 int_couner < count1) {
                 auto var2 = counter << 1;
                 mem_active[DynamicOffset(0xec + var2)] = mem_active[DynamicOffset(0xec + var2)] + 1;
@@ -497,7 +501,7 @@ void processEnc() {
     if (randMain(0x20) == 0) {
         tomadoi = true;
     } else {
-        randMain(4);
+        randMain(0x20);
     }
 
     CONDITIONAL_ASSIGN(mem_active, mem, 0x24);
@@ -567,18 +571,27 @@ bool EmulationMain(uint32_t seed) {
     auto rand = randMain(31);
     stepCounter += static_cast<int>(enc_walk[rand]);
 
+#ifdef DEBUG
+    std::cout << "!! 0x" << std::hex << stepCounter << std::dec << std::endl;
+#endif
+    int mati = false;
     int counter = 0;
+    //FUN_02023c8c
+    //02023c8e
     while (stepCounter >= 0) {
         processEnc();
         stepCounter -= PER_STEP;
         counter++;
 #ifdef DEBUG
+        std::cout << "!! 0x" << std::hex << stepCounter << std::dec << std::endl;
         std::cout << "=======" << std::endl;
 #endif
     }
 
     processEnc();
     processEnc();
+
+    //processEnc();
 
     auto enc1GId = mem_active[DynamicOffset(0xe4)];
     auto enc1GCount = mem_active[DynamicOffset(0xec)];
@@ -599,8 +612,7 @@ bool EmulationMain(uint32_t seed) {
     } else {
         randMain(0x20);
     }
-
-    if (tomadoi && enc1GId == 0x31) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
+    if (tomadoi && enc1GId == 0x29 && enc1GCount == 2 && enc2GId == 0) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
         return true;
     }
     return false;
@@ -619,33 +631,12 @@ int main() {
 
     auto t0 = std::chrono::high_resolution_clock::now();
     uint32_t base1 = 0x7e9056a0;
-    //mon_list_couner = gen_mon_list(mon_list);
 
 
-    //a^86785 % MODULUS = 1697460069
-    //c * (a^86784 + ... + 1) % MODULUS = 70898115
-/*    const uint32_t N = 86785;
-
-    // 計算1: a^N % MODULUS
-    uint64_t aN = modExp(MULTIPLIER, N, MODULUS);
-    printf("a^86785 %% MODULUS = %llu\n", aN);
-
-    // 計算2: c * (a^(N-1) + a^(N-2) + ... + 1) % MODULUS
-    uint64_t sum = 0;
-    uint64_t factor = 1;
-    for (uint32_t i = 0; i < N; ++i) {
-        sum = (sum + factor) % MODULUS;
-        factor = (factor * MULTIPLIER) % MODULUS;
-    }
-    uint64_t cSum = (sum * INCREMENT) % MODULUS;
-    printf("c * (a^86784 + ... + 1) %% MODULUS = %llu\n", cSum);*/
-
-
-    std::unordered_set<uint32_t> known_values;
 
 
 #ifndef DEBUG
-
+    std::unordered_set<uint32_t> known_values;
     /*
     id:0, 31
     id:1, 29
@@ -660,26 +651,26 @@ int main() {
  */
     for (int y = 2000; y < 2099; ++y) {
         for (int m = 1; m < 12; ++m) {
-            for (int d = 0; d < 28; ++d) {
+            for (int d = 1; d < 28; ++d) {
                 for (int h = 0; h < 24; ++h) {
                     for (int min = 0; min < 60; ++min) {
                         std::uint32_t encodedDate2 = encodeDate(y, m, d);
                         std::uint32_t encodeTime2 = encodeTime(h, min, 10);
                         uint32_t seed = base1 + encodedDate2 + encodeTime2;
-                        if (!known_values.contains(seed)) {
-                            known_values.insert(seed);
+                        //if (!known_values.contains(seed)) {
+                            //known_values.insert(seed);
                             if (EmulationMain(seed)) {
                                 std::cout << seed << ", " << y << "/" << m << "/" << d << " " << h << ":" << min  << ":10"  << ", " << std::hex << "0x" << encodedDate2 << ", " << encodeTime2 << std::dec << std::endl;
-                                return 0;
+                                //return 0;
                             }
-                        }
+                        //}
                     }
                 }
             }
         }
     }
 #else
-    EmulationMain(2208329120);
+    EmulationMain(2192083723);
 
 
 //    for (int i = 0; i < 10; ++i) {
