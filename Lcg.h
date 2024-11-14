@@ -12,9 +12,7 @@ class Lcg {
 public:
     static void randMainJumpFlexible(uint32_t jumps);
 
-    static void randMainRaw();
-
-    static void randMainJump(uint32_t N);
+    static uint32_t randMainNop();
 
     static void randMainJump86785();
 
@@ -23,6 +21,8 @@ public:
     static void randInit(uint32_t seed);
 
     static int getPosition();
+
+    static uint32_t getNowSeed();
 
     static void previousSeed();
 

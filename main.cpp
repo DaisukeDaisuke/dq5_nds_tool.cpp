@@ -231,21 +231,21 @@ constexpr int mon_sizeO_tomo = mon_dataOtomo.second;
 
 
 constexpr int64_t enc_walk[0x1f] = {
-        0xfffffb57 - 0xffffffffLL,
-        0xfffffc2a - 0xffffffffLL,
-        0xfffffcb4 - 0xffffffffLL,
-        0xfffffd1f - 0xffffffffLL,
-        0xfffffd79 - 0xffffffffLL,
-        0xfffffdc8 - 0xffffffffLL,
-        0xfffffe0f - 0xffffffffLL,
-        0xfffffe50 - 0xffffffffLL,
-        0xfffffe8d - 0xffffffffLL,
-        0xfffffec7 - 0xffffffffLL,
-        0xfffffefe - 0xffffffffLL,
-        0xffffff34 - 0xffffffffLL,
-        0xffffff68 - 0xffffffffLL,
-        0xffffff9b - 0xffffffffLL,
-        0xffffffcd - 0xffffffffLL,
+        0xfffffb57 - 0xffffffffLL - 1,
+        0xfffffc2a - 0xffffffffLL - 1,
+        0xfffffcb4 - 0xffffffffLL - 1,
+        0xfffffd1f - 0xffffffffLL - 1,
+        0xfffffd79 - 0xffffffffLL - 1,
+        0xfffffdc8 - 0xffffffffLL - 1,
+        0xfffffe0f - 0xffffffffLL - 1,
+        0xfffffe50 - 0xffffffffLL - 1,
+        0xfffffe8d - 0xffffffffLL - 1,
+        0xfffffec7 - 0xffffffffLL - 1,
+        0xfffffefe - 0xffffffffLL - 1,
+        0xffffff34 - 0xffffffffLL - 1,
+        0xffffff68 - 0xffffffffLL - 1,
+        0xffffff9b - 0xffffffffLL - 1,
+        0xffffffcd - 0xffffffffLL - 1,
         0,
         0x00000032,
         0x00000064,
@@ -296,7 +296,6 @@ bool FUN_02035740(int param2, int param3) {
     } while (4 > counter);
     return false;
 }
-
 
 
 void processEnc() {
@@ -387,9 +386,9 @@ bool EmulationMain(uint32_t seed) {
     auto enc3GId = mem_active[DynamicOffset(0xe4 + 2 * 2)];
     auto enc3GCount = mem_active[DynamicOffset(0xec + 2 * 2)];
 
-    auto count = (enc1GCount+enc2GCount+enc3GCount) * 2;
+    auto count = (enc1GCount + enc2GCount + enc3GCount) * 2;
     Lcg::randMainJump86785();
-    Lcg::randMainJump(count);
+    Lcg::randMainJumpFlexible(count);
 
     auto tomadoi = false;
     if (Lcg::randMain(0x20) == 0) {
@@ -397,13 +396,42 @@ bool EmulationMain(uint32_t seed) {
     } else {
         Lcg::randMain(0x20);
     }
+//    Lcg::randMainNop();
+//    auto a = Lcg::randMain(41);
+//    auto ad = Lcg::randMain(41);
+//    auto ap = Lcg::randMain(41);
+//
+//    auto tmp = std::max(std::max(a, ad), ap);
+//    if(tmp == ap){
+//        return false;
+//    }
+//
+//    auto jmp = 6;
+//    if (tmp == ad){
+//        jmp = 10;
+//    }
 
-    if (tomadoi && enc1GId == 45 && enc1GCount == 2 && enc2GId == 0) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
+    //Lcg::randMainNop();
+    Lcg::randMainJumpFlexible(3);
+    auto test = Lcg::randMain(3); // 0x02131e75
+    if (test == 0){
+        Lcg::randMainJumpFlexible(5);
+    }else{
+        return false; // 役に立たないなんかする
+    }
+
+    Lcg::randMainNop();
+
+    if (Lcg::randMain(2) == 1 && tomadoi && enc1GId == 45 && enc1GCount == 1 &&
+        enc2GId == 0) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
+//        Lcg::randMainJumpFlexible(59);
+//        if (Lcg::randMain(256) != 0){
+//            return false;
+//        }
         return true;
     }
     return false;
 }
-
 
 
 // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
@@ -425,25 +453,67 @@ int main() {
 #ifndef DEBUG
     for (int y = 2000; y < 2099; ++y) {
         for (int m = 1; m < 12; ++m) {
-            for (int d = 0; d < 28; ++d) {
-                for (int h = 0; h < 24; ++h) {
-                    for (int min = 0; min < 60; ++min) {
+            for (int d = 1; d < 28; ++d) {
+                for (int h = 0; h < 23; ++h) {
+                    for (int min = 0; min < 59; ++min) {
                         std::uint32_t encodedDate2 = DeteUtility::encodeDate(y, m, d);
                         std::uint32_t encodeTime2 = DeteUtility::encodeTime(h, min, 10);
                         uint32_t seed = base1 + encodedDate2 + encodeTime2;
-                        if (!known_values.contains(seed)) {
-                            known_values.insert(seed);
+                        //if (!known_values.contains(seed)) {
+                            //known_values.insert(seed);
                             if (EmulationMain(seed)) {
                                 std::cout << seed << ", " << y << "/" << m << "/" << d << " " << h << ":" << min  << ":10"  << ", " << std::hex << "0x" << encodedDate2 << ", " << encodeTime2 << std::dec << std::endl;
                             }
-                        }
+                        //}
                     }
                 }
             }
         }
     }
+
+//    Lcg::randInit(2208400884);
+//    Lcg::randMainJumpFlexible(174477);
+//    Lcg::randMainJumpFlexible(86975);
+//    for (int i = 0; i < 500; ++i) {
+//        if (Lcg::randMain(256) == 0){
+//            std::cout << Lcg::getPosition() << std::endl;
+//        }
+//    }
+
+
+//    Lcg::randInit(2208400884);
+//    Lcg::randMainJumpFlexible(174477);
+
+//    for (int i = 0; i < 10; ++i) {
+//        std::cout << Lcg::getNowSeed() << std::endl;
+//        Lcg::randMainNop();
+//    }
+
+//    uint32_t currentSeed = Lcg::getNowSeed();
+//    for (uint32_t i = 0; i < 9; ++i) {
+//        auto cuseed1 = currentSeed;
+//        for (uint32_t j = 0; j < 9; ++j) {
+//            EmulationMain(currentSeed);
+//            auto enc1GId = mem_active[DynamicOffset(0xe4)];
+//            if (enc1GId == 45) {
+//                std::cout << i << ", " << j << "," << Lcg::getPosition() << std::endl;
+//            }
+//
+//            Lcg::randInit(currentSeed);
+//            auto test = Lcg::randMain(2);
+//            currentSeed = Lcg::randMainNop();
+//            if (test == 0) {
+//                currentSeed = Lcg::randMainNop();
+//            }
+//        }
+//        Lcg::randInit(cuseed1);
+//        Lcg::randMainJump100(11+1);
+//        currentSeed = Lcg::getNowSeed();
+//    }
 #else
-    EmulationMain(2225166851);
+
+
+    EmulationMain(2208796337);
 
     std::cout << std::dec << mem_active[DynamicOffset(0xe4)] << "," << mem_active[DynamicOffset(0xec)] << std::endl;
     std::cout << std::dec << mem_active[DynamicOffset(0xe4 + 1 * 2)] << "," << mem_active[DynamicOffset(0xec + 1 * 2)]

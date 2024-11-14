@@ -6,6 +6,6 @@
 #define DQ5_DS_RANDS_DEBUG_H
 
 
-#define DEBUG 1
+//#define DEBUG 1
 
 #endif //DQ5_DS_RANDS_DEBUG_H

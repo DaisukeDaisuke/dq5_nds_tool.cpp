@@ -26,9 +26,9 @@ std::uint32_t DeteUtility::encodeDate(int year1, int month, int day) {
     int year2 = year1 - 2000;
 
     //10 = 0x10
-    month = div_day_adjust(month);
-    day = div_day_adjust(day);
-    year2 = div_day_adjust(year2);
+    month = DeteUtility::div_day_adjust(month);
+    day = DeteUtility::div_day_adjust(day);
+    year2 = DeteUtility::div_day_adjust(year2);
 
 
     // 年を2桁に短縮してビットシフトで16進数相当の整数を作成
@@ -43,7 +43,7 @@ std::uint32_t DeteUtility::encodeDate(int year1, int month, int day) {
 
 // 時、分、秒のスキップを考慮したエンコード
 std::uint32_t DeteUtility::encodeTime(int hour, int minute, int second) {
-    if (hour < 0 || hour > 23 || minute < 1 || minute > 59 || second < 0 || second > 59) {
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59 || second < 0 || second > 59) {
         throw std::out_of_range("Invalid time input");
     }
 

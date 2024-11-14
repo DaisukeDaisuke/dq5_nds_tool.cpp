@@ -8,11 +8,11 @@
 
 class DeteUtility {
 public:
-    std::uint32_t encodeDate(int year1, int month, int day);
-    std::uint32_t encodeTime(int hour, int minute, int second);
+    static std::uint32_t encodeDate(int year1, int month, int day);
+    static std::uint32_t encodeTime(int hour, int minute, int second);
 
 private:
-    inline int div_day_adjust(int day);
+    static inline int div_day_adjust(int day);
 };
 
 
