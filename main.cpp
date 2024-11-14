@@ -428,29 +428,29 @@ bool EmulationMain(uint32_t seed) {
         return false; // 役に立たないなんかする
     }
 
-//    Lcg::randMainNop();
-//    Lcg::randMainJumpFlexible(3);
-//
-//    if (Lcg::randMain(2) != 1){
-//        return false;
-//    }
-//
-//    Lcg::randMainJumpFlexible(8);
-//    if (Lcg::randMain(2) != 1){
-//        return false;
-//    }
-//
-//    Lcg::randMainJumpFlexible(6);
-//    if (Lcg::randMain(2) != 1){
-//        return false;
-//    }
+    Lcg::randMainNop();
+    Lcg::randMainJumpFlexible(3);
 
-    if (enc1GId == 45 && enc1GCount == 1 &&
+    if (Lcg::randMain(2) != 1){
+        return false;
+    }
+
+    Lcg::randMainJumpFlexible(8);
+    if (Lcg::randMain(2) != 1){
+        return false;
+    }
+
+    Lcg::randMainJumpFlexible(6);
+    if (Lcg::randMain(2) != 1){
+        return false;
+    }
+
+    if (tomadoi && enc1GId == 45 && enc1GCount == 1 &&
         enc2GId == 0) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
-//        Lcg::randMainJumpFlexible(52);
-//        if (Lcg::randMain(256) != 0){
-//            return false;
-//        }
+        Lcg::randMainJumpFlexible(52);
+        if (Lcg::randMain(256) != 0){
+            return false;
+        }
         return true;
     }
     return false;
