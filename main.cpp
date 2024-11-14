@@ -386,9 +386,17 @@ bool EmulationMain(uint32_t seed) {
     auto enc3GId = mem_active[DynamicOffset(0xe4 + 2 * 2)];
     auto enc3GCount = mem_active[DynamicOffset(0xec + 2 * 2)];
 
-    auto count = (enc1GCount + enc2GCount + enc3GCount) * 2;
+    //auto count = (enc1GCount + enc2GCount + enc3GCount) * 2;
+    auto count = enc1GCount + enc2GCount + enc3GCount;
     Lcg::randMainJump86785();
-    Lcg::randMainJumpFlexible(count);
+    //Lcg::randMainJumpFlexible(count);
+
+    for (int i = 0; i < count; ++i) {
+        Lcg::randMainNop();
+        if (Lcg::randMain(25) > 15){
+            return false;
+        }
+    }
 
     auto tomadoi = false;
     if (Lcg::randMain(0x20) == 0) {
@@ -411,7 +419,7 @@ bool EmulationMain(uint32_t seed) {
 //        jmp = 10;
 //    }
 
-    //Lcg::randMainNop();
+    Lcg::randMainNop();
     Lcg::randMainJumpFlexible(3);
     auto test = Lcg::randMain(3); // 0x02131e75
     if (test == 0){
@@ -420,11 +428,26 @@ bool EmulationMain(uint32_t seed) {
         return false; // 役に立たないなんかする
     }
 
-    Lcg::randMainNop();
+//    Lcg::randMainNop();
+//    Lcg::randMainJumpFlexible(3);
+//
+//    if (Lcg::randMain(2) != 1){
+//        return false;
+//    }
+//
+//    Lcg::randMainJumpFlexible(8);
+//    if (Lcg::randMain(2) != 1){
+//        return false;
+//    }
+//
+//    Lcg::randMainJumpFlexible(6);
+//    if (Lcg::randMain(2) != 1){
+//        return false;
+//    }
 
-    if (Lcg::randMain(2) == 1 && tomadoi && enc1GId == 45 && enc1GCount == 1 &&
+    if (enc1GId == 45 && enc1GCount == 1 &&
         enc2GId == 0) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
-//        Lcg::randMainJumpFlexible(59);
+//        Lcg::randMainJumpFlexible(52);
 //        if (Lcg::randMain(256) != 0){
 //            return false;
 //        }
