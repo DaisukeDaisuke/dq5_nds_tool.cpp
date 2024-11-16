@@ -22,6 +22,8 @@ public:
 
     static int getPosition();
 
+    static int randIntRange(int base, int diff1, int diff2);
+
     static uint32_t getNowSeed();
 
     static void previousSeed();

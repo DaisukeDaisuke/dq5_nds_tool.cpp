@@ -390,10 +390,9 @@ bool EmulationMain(uint32_t seed) {
     auto count = enc1GCount + enc2GCount + enc3GCount;
     Lcg::randMainJump86785();
     //Lcg::randMainJumpFlexible(count);
-
     for (int i = 0; i < count; ++i) {
         Lcg::randMainNop();
-        if (Lcg::randMain(25) > 15){
+        if (Lcg::randMain(25) > 10){
             return false;
         }
     }
@@ -419,18 +418,107 @@ bool EmulationMain(uint32_t seed) {
 //        jmp = 10;
 //    }
 
-    Lcg::randMainNop();
-    Lcg::randMainJumpFlexible(3);
-    auto test = Lcg::randMain(3); // 0x02131e75
+    //Lcg::randMainNop();
+    //Lcg::randMainJumpFlexible(4);
+
+    auto as = Lcg::randIntRange(170, 20, 20);
+    auto ad = Lcg::randIntRange(120, 20, 20);
+    auto ap = Lcg::randIntRange(400, 20, 20);
+    auto ms = Lcg::randIntRange(1150, 20, 20);
+
+    auto ac = Lcg::randMain(256);
+    if (ac <= 42){
+        return false;// flee
+    }
+    auto attack = false;
+    if (ac <= 84){
+        attack = true;
+        Lcg::randMainJumpFlexible(2);
+    }
+    if (ac >= 85&&ac <= 127){
+        return false;// flee
+    }
+    auto mera = false;
+    if (ac >= 128&&ac <= 170){
+        mera = true;
+        Lcg::randMainNop();
+    }
+    if (ac >= 171&&ac <= 212){
+        return false;
+    }
+    if (ac >= 213&&ac <= 256){
+        attack = true;
+        Lcg::randMainJumpFlexible(2);
+    }
+
+    auto test = Lcg::randMain(2); // 0x02131e75
     if (test == 0){
-        Lcg::randMainJumpFlexible(5);
+        //Lcg::randMainJumpFlexible(5);
     }else{
         return false; // 役に立たないなんかする
     }
 
-    Lcg::randMainNop();
-    Lcg::randMainJumpFlexible(3);
+    if (mera){
+        Lcg::randMainJumpFlexible(5);
+        Lcg::randMainJumpFlexible(5);
+    }
 
+    if (attack){
+        //Lcg::randMainJumpFlexible(12);
+        Lcg::randMainJumpFlexible(5);
+        Lcg::randMainJumpFlexible(7);
+    }
+
+    if (as >= ad){
+        Lcg::randMainJumpFlexible(4);
+        if (Lcg::randMain(2) != 1){
+            return false;
+        }
+        //Lcg::randMainJumpFlexible(8);
+
+        Lcg::randMainJumpFlexible(5);
+        Lcg::randMainNop();
+        if (Lcg::randMain(2) == 1){
+            Lcg::randMainNop();
+        }
+        //Lcg::randMainJumpFlexible(6);
+        if (Lcg::randMain(2) != 1){
+            return false;
+        }
+
+        Lcg::randMainJumpFlexible(8);
+        if (Lcg::randMain(2) != 1){
+            return false;
+        }
+
+        if (enc1GId == 45 && enc1GCount == 1 &&
+            enc2GId == 0) {
+            return true;
+        }else{
+            return false;
+        }
+    } else{
+        return false;
+    }
+
+    Lcg::randMainJumpFlexible(5);
+//    Lcg::randMainNop();
+//    if (Lcg::randMain(2) == 1){
+//        Lcg::randMainNop();
+//    }
+
+    Lcg::randMainJumpFlexible(2);
+    if (Lcg::randMain(2) != 1){
+        return false;
+    }
+    //Lcg::randMainJumpFlexible(8);
+
+    Lcg::randMainJumpFlexible(5);
+    Lcg::randMainNop();
+    if (Lcg::randMain(2) == 1){
+        Lcg::randMainNop();
+    }
+    //Lcg::randMainJumpFlexible(6);
     if (Lcg::randMain(2) != 1){
         return false;
     }
@@ -440,12 +528,7 @@ bool EmulationMain(uint32_t seed) {
         return false;
     }
 
-    Lcg::randMainJumpFlexible(6);
-    if (Lcg::randMain(2) != 1){
-        return false;
-    }
-
-    if (tomadoi && enc1GId == 45 && enc1GCount == 1 &&
+    if (enc1GId == 45 && enc1GCount == 1 &&
         enc2GId == 0) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
         Lcg::randMainJumpFlexible(52);
         if (Lcg::randMain(256) != 0){
@@ -536,7 +619,7 @@ int main() {
 #else
 
 
-    EmulationMain(2208796337);
+    EmulationMain(2142404527);
 
     std::cout << std::dec << mem_active[DynamicOffset(0xe4)] << "," << mem_active[DynamicOffset(0xec)] << std::endl;
     std::cout << std::dec << mem_active[DynamicOffset(0xe4 + 1 * 2)] << "," << mem_active[DynamicOffset(0xec + 1 * 2)]

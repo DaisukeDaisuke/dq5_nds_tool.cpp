@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include "Lcg.h"
 #include "debug.h"
+#include <cmath>
 
 //https://chatgpt.com/share/6732e1c2-5f30-8013-a93b-e0ea233db0ed
 
@@ -44,6 +45,7 @@ void Lcg::randMainJumpFlexible(uint32_t jumps) {
     }
 
     NowSeed = static_cast<uint32_t>((aN * NowSeed + cSum) % MODULUS);
+    position += jumps;
 }
 
 uint32_t Lcg::randMainNop() {
@@ -106,4 +108,10 @@ uint32_t Lcg::modularInverse(uint32_t a, uint64_t m) {
 
 uint32_t Lcg::getNowSeed() {
     return NowSeed;
+}
+
+int Lcg::randIntRange(int base, int diff1, int diff2) {
+    auto test = randMain(diff1 + diff2 + 1);
+    auto tmp2 =  ((100 - diff1) + test);
+    return static_cast<int>(std::floor((base * tmp2) / 100));
 }
