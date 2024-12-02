@@ -36,6 +36,8 @@ void Lcg::randMainJumpFlexible(uint32_t jumps) {
     uint64_t aN = 1;
     uint64_t cSum = 0;
 
+    position += jumps;
+
     for (int i = 0; jumps > 0; ++i) {
         if (jumps & 1) {
             aN = (aN * JUMP_MULTIPLIERS[i]) % MODULUS;
@@ -45,7 +47,6 @@ void Lcg::randMainJumpFlexible(uint32_t jumps) {
     }
 
     NowSeed = static_cast<uint32_t>((aN * NowSeed + cSum) % MODULUS);
-    position += jumps;
 }
 
 uint32_t Lcg::randMainNop() {

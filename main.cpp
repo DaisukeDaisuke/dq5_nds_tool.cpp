@@ -21,13 +21,13 @@ constexpr int getMemConst(uint32_t offset) {
         case 8:
             return 8;
         case 4:
-            return Lcg::randMain(2) + 1;  // 実行時に評価される
+            return Lcg::randMain(2) + 1; // 実行時に評価される
         case 5:
-            return Lcg::randMain(2) + 2;  // 実行時に評価される
+            return Lcg::randMain(2) + 2; // 実行時に評価される
         case 6:
-            return Lcg::randMain(3) + 2;  // 実行時に評価される
+            return Lcg::randMain(3) + 2; // 実行時に評価される
         case 7:
-            return Lcg::randMain(4) + 4;  // 実行時に評価される
+            return Lcg::randMain(4) + 4; // 実行時に評価される
         default:
             return 0;
     }
@@ -35,109 +35,109 @@ constexpr int getMemConst(uint32_t offset) {
 
 
 constexpr int mem[0xf8] = {
-        0x00000016,
-        0x0000000d,
-        0x00000003,
-        00000000,
-        0x00000001,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        0x0000000a,
-        00000000,
-        00000000,
-        00000000,
-        0x00000002, //14 = 0 * 0xc + 0x1c
-        00000000,
-        0x00000033,
-        00000000,
-        0x00000003,
-        00000000,
-        0x00000004, //20 = 1 * 0xc + 0x1c
-        00000000,
-        0x00000034,
-        00000000,
-        0x00000003,
-        00000000,
-        0x00000004,  //26 = 2 * 0xc + 0x1c
-        00000000,
-        0x00000037,
-        00000000,
-        0x00000003,
-        00000000,
-        0x00000004, //32 = 3 * 0xc + 0x1c
-        00000000,
-        0x0000002d,
-        00000000,
-        0x00000002,
-        00000000,
-        0x00000004, //38 = 4 * 0xc + 0x1c
-        00000000,
-        0x00000028,
-        00000000,
-        0x00000004,
-        00000000,
-        0x00000002, //44 = 5 * 0xc + 0x1c
-        00000000,
-        0x00000033,
-        00000000,
-        0x00000006,
-        00000000,
-        0x00000004, //50 = 6 * 0xc + 0x1c
-        00000000,
-        0x00000034,
-        00000000,
-        0x00000005,
-        00000000,
-        0x00000004, //56 = 7 * 0xc + 0x1c
-        00000000,
-        0x00000037,
-        00000000,
-        0x00000005,
-        00000000,
-        0x00000004, //62 = 8 * 0xc + 0x1c
-        00000000,
-        0x0000002d,
-        00000000,
-        0x00000004,
-        00000000,
-        0x00000004, //68 = 9 * 0xc + 0x1c
-        00000000,
-        0x000000de,
-        00000000,
-        0x00000008,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
-        00000000,
+    0x00000016,
+    0x0000000d,
+    0x00000003,
+    00000000,
+    0x00000001,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    0x0000000a,
+    00000000,
+    00000000,
+    00000000,
+    0x00000002, //14 = 0 * 0xc + 0x1c
+    00000000,
+    0x00000033,
+    00000000,
+    0x00000003,
+    00000000,
+    0x00000004, //20 = 1 * 0xc + 0x1c
+    00000000,
+    0x00000034,
+    00000000,
+    0x00000003,
+    00000000,
+    0x00000004, //26 = 2 * 0xc + 0x1c
+    00000000,
+    0x00000037,
+    00000000,
+    0x00000003,
+    00000000,
+    0x00000004, //32 = 3 * 0xc + 0x1c
+    00000000,
+    0x0000002d,
+    00000000,
+    0x00000002,
+    00000000,
+    0x00000004, //38 = 4 * 0xc + 0x1c
+    00000000,
+    0x00000028,
+    00000000,
+    0x00000004,
+    00000000,
+    0x00000002, //44 = 5 * 0xc + 0x1c
+    00000000,
+    0x00000033,
+    00000000,
+    0x00000006,
+    00000000,
+    0x00000004, //50 = 6 * 0xc + 0x1c
+    00000000,
+    0x00000034,
+    00000000,
+    0x00000005,
+    00000000,
+    0x00000004, //56 = 7 * 0xc + 0x1c
+    00000000,
+    0x00000037,
+    00000000,
+    0x00000005,
+    00000000,
+    0x00000004, //62 = 8 * 0xc + 0x1c
+    00000000,
+    0x0000002d,
+    00000000,
+    0x00000004,
+    00000000,
+    0x00000004, //68 = 9 * 0xc + 0x1c
+    00000000,
+    0x000000de,
+    00000000,
+    0x00000008,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
+    00000000,
 };
 int mem_active[0xf8] = {0};
 
@@ -162,24 +162,24 @@ constexpr size_t BYTE_OFFSET() {
 
 
 constexpr int encmem[0xb] = {
-        mem[DynamicOffset(0 * 0xc + 0x1c)],
-        mem[DynamicOffset(1 * 0xc + 0x1c)],
-        mem[DynamicOffset(2 * 0xc + 0x1c)],
-        mem[DynamicOffset(3 * 0xc + 0x1c)],
-        mem[DynamicOffset(4 * 0xc + 0x1c)],
-        mem[DynamicOffset(5 * 0xc + 0x1c)],
-        mem[DynamicOffset(6 * 0xc + 0x1c)],
-        mem[DynamicOffset(7 * 0xc + 0x1c)],
-        mem[DynamicOffset(8 * 0xc + 0x1c)],
-        mem[DynamicOffset(9 * 0xc + 0x1c)],
-        mem[DynamicOffset(0xc4)],
+    mem[DynamicOffset(0 * 0xc + 0x1c)],
+    mem[DynamicOffset(1 * 0xc + 0x1c)],
+    mem[DynamicOffset(2 * 0xc + 0x1c)],
+    mem[DynamicOffset(3 * 0xc + 0x1c)],
+    mem[DynamicOffset(4 * 0xc + 0x1c)],
+    mem[DynamicOffset(5 * 0xc + 0x1c)],
+    mem[DynamicOffset(6 * 0xc + 0x1c)],
+    mem[DynamicOffset(7 * 0xc + 0x1c)],
+    mem[DynamicOffset(8 * 0xc + 0x1c)],
+    mem[DynamicOffset(9 * 0xc + 0x1c)],
+    mem[DynamicOffset(0xc4)],
 };
 
 // リストを静的に生成し、要素数カウンタも返す constexpr 関数
 template<int size>
 constexpr auto gen_mon_list() {
-    constexpr int max_size = 100;  // 最大サイズ（encmem に合わせて調整）
-    std::array<int, max_size> list = {};  // std::array でリストを作成
+    constexpr int max_size = 100; // 最大サイズ（encmem に合わせて調整）
+    std::array<int, max_size> list = {}; // std::array でリストを作成
     int counter = 0;
 
     for (int i = 0; i < size; ++i) {
@@ -188,15 +188,15 @@ constexpr auto gen_mon_list() {
         }
     }
 
-    return std::make_pair(list, counter);  // 配列とカウンタのペアを返す
+    return std::make_pair(list, counter); // 配列とカウンタのペアを返す
 }
 
-constexpr int encmem1G[4] = {3, 0, 0, 2};//FUN_020356a8_read_enc2
+constexpr int encmem1G[4] = {3, 0, 0, 2}; //FUN_020356a8_read_enc2
 
 template<int size>
 constexpr auto gen_mon_list1G() {
-    constexpr int max_size = 100;  // 最大サイズ（encmem に合わせて調整）
-    std::array<int, max_size> list = {};  // std::array でリストを作成
+    constexpr int max_size = 100; // 最大サイズ（encmem に合わせて調整）
+    std::array<int, max_size> list = {}; // std::array でリストを作成
     int counter = 0;
 
     for (int i = 0; i < size; ++i) {
@@ -208,7 +208,7 @@ constexpr auto gen_mon_list1G() {
         }
     }
 
-    return std::make_pair(list, counter);  // 配列とカウンタのペアを返す
+    return std::make_pair(list, counter); // 配列とカウンタのペアを返す
 }
 
 // マクロでリストとサイズを生成
@@ -231,37 +231,37 @@ constexpr int mon_sizeO_tomo = mon_dataOtomo.second;
 
 
 constexpr int64_t enc_walk[0x1f] = {
-        0xfffffb57 - 0xffffffffLL - 1,
-        0xfffffc2a - 0xffffffffLL - 1,
-        0xfffffcb4 - 0xffffffffLL - 1,
-        0xfffffd1f - 0xffffffffLL - 1,
-        0xfffffd79 - 0xffffffffLL - 1,
-        0xfffffdc8 - 0xffffffffLL - 1,
-        0xfffffe0f - 0xffffffffLL - 1,
-        0xfffffe50 - 0xffffffffLL - 1,
-        0xfffffe8d - 0xffffffffLL - 1,
-        0xfffffec7 - 0xffffffffLL - 1,
-        0xfffffefe - 0xffffffffLL - 1,
-        0xffffff34 - 0xffffffffLL - 1,
-        0xffffff68 - 0xffffffffLL - 1,
-        0xffffff9b - 0xffffffffLL - 1,
-        0xffffffcd - 0xffffffffLL - 1,
-        0,
-        0x00000032,
-        0x00000064,
-        0x00000097,
-        0x000000cb,
-        0x00000101,
-        0x00000138,
-        0x00000172,
-        0x000001af,
-        0x000001f0,
-        0x00000237,
-        0x00000286,
-        0x000002e0,
-        0x0000034b,
-        0x000003d5,
-        0x000004a8,
+    0xfffffb57 - 0xffffffffLL - 1,
+    0xfffffc2a - 0xffffffffLL - 1,
+    0xfffffcb4 - 0xffffffffLL - 1,
+    0xfffffd1f - 0xffffffffLL - 1,
+    0xfffffd79 - 0xffffffffLL - 1,
+    0xfffffdc8 - 0xffffffffLL - 1,
+    0xfffffe0f - 0xffffffffLL - 1,
+    0xfffffe50 - 0xffffffffLL - 1,
+    0xfffffe8d - 0xffffffffLL - 1,
+    0xfffffec7 - 0xffffffffLL - 1,
+    0xfffffefe - 0xffffffffLL - 1,
+    0xffffff34 - 0xffffffffLL - 1,
+    0xffffff68 - 0xffffffffLL - 1,
+    0xffffff9b - 0xffffffffLL - 1,
+    0xffffffcd - 0xffffffffLL - 1,
+    0,
+    0x00000032,
+    0x00000064,
+    0x00000097,
+    0x000000cb,
+    0x00000101,
+    0x00000138,
+    0x00000172,
+    0x000001af,
+    0x000001f0,
+    0x00000237,
+    0x00000286,
+    0x000002e0,
+    0x0000034b,
+    0x000003d5,
+    0x000004a8,
 };
 
 bool FUN_02035740(int param2, int param3) {
@@ -281,7 +281,7 @@ bool FUN_02035740(int param2, int param3) {
                 mem_active[DynamicOffset(var2 + 0xec)] = mem_active[DynamicOffset(var2 + 0xec)] + 1; // モンスター数
                 mem_active[DynamicOffset(var2 + 0xf4)] = param2;
                 return true;
-            }//45 = 3
+            } //45 = 3
             auto pre = mem_active[DynamicOffset(param1Counter + 0xf4)];
             auto count1 = (mem_active[DynamicOffset(param2 * 0xc + 0x24)] & 0xffff);
             if (param2 == pre &&
@@ -299,9 +299,9 @@ bool FUN_02035740(int param2, int param3) {
 
 
 void processEnc() {
-//    if (position == 141) {
-//        std::cout << "!!" << std::endl;
-//    }
+    //    if (position == 141) {
+    //        std::cout << "!!" << std::endl;
+    //    }
     memcpy(mem_active, mem, sizeof(mem_active));
     auto tomadoi = false;
     if (Lcg::randMain(0x20) == 0) {
@@ -357,7 +357,7 @@ void processEnc() {
 
 int stepCounter = 0;
 
-bool EmulationMain(uint32_t seed) {
+bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
     Lcg::randInit(seed);
     processEnc();
     stepCounter = 0x1e00;
@@ -392,7 +392,7 @@ bool EmulationMain(uint32_t seed) {
     //Lcg::randMainJumpFlexible(count);
     for (int i = 0; i < count; ++i) {
         Lcg::randMainNop();
-        if (Lcg::randMain(25) > 10){
+        if (Lcg::randMain(25) > 8) {
             return false;
         }
     }
@@ -403,125 +403,205 @@ bool EmulationMain(uint32_t seed) {
     } else {
         Lcg::randMain(0x20);
     }
-    //Lcg::randMainNop();
+    Lcg::randMainNop();
     //Lcg::randMainJumpFlexible(4);
 
-    auto as = Lcg::randIntRange(170, 20, 20);
-    auto ad = Lcg::randIntRange(120, 20, 20);
+    auto as = Lcg::randIntRange(170, 20, 20); // A
+    auto ad = Lcg::randIntRange(200, 20, 20);
     auto ap = Lcg::randIntRange(400, 20, 20);
-    auto ms = Lcg::randIntRange(1150, 20, 20);
+    //auto ms = Lcg::randIntRange(1150, 20, 20);
 
-    auto ac = Lcg::randMain(256);
-    if (ac <= 42){
-        return false;// flee
-    }
-    auto attack = false;
-    if (ac <= 84){
-        attack = true;
-        Lcg::randMainJumpFlexible(2);
-    }
-    if (ac >= 85&&ac <= 127){
-        return false;// flee
-    }
-    auto mera = false;
-    if (ac >= 128&&ac <= 170){
-        mera = true;
-        Lcg::randMainNop();
-    }
-    if (ac >= 171&&ac <= 212){
-        return false;
-    }
-    if (ac >= 213&&ac <= 256){
-        attack = true;
-        Lcg::randMainJumpFlexible(2);
-    }
 
-    auto test = Lcg::randMain(2); // 0x02131e75
-    if (test == 0){
-        //Lcg::randMainJumpFlexible(5);
-    }else{
-        return false; // 役に立たないなんかする
-    }
+    //Lcg::randMainJumpFlexible(2);
 
-    if (mera){
-        Lcg::randMainJumpFlexible(5);
-        Lcg::randMainJumpFlexible(5);
-    }
-
-    if (attack){
-        //Lcg::randMainJumpFlexible(12);
-        Lcg::randMainJumpFlexible(5);
-        Lcg::randMainJumpFlexible(7);
-    }
-
-    if (as >= ad){
-        Lcg::randMainJumpFlexible(4);
-        if (Lcg::randMain(2) != 1){
+    if (adams) {
+        if (Lcg::randMain(2) != 0) {
             return false;
         }
-        //Lcg::randMainJumpFlexible(8);
-
-        Lcg::randMainJumpFlexible(5);
-        Lcg::randMainNop();
-        if (Lcg::randMain(2) == 1){
-            Lcg::randMainNop();
-        }
-        //Lcg::randMainJumpFlexible(6);
-        if (Lcg::randMain(2) != 1){
-            return false;
-        }
-
         Lcg::randMainJumpFlexible(8);
-        if (Lcg::randMain(2) != 1){
+        if (Lcg::randMain(2) != 0) {
             return false;
         }
-
-        if (enc1GId == 45 && enc1GCount == 1 &&
-            enc2GId == 0) {
-            return true;
-        }else{
+        Lcg::randMainJumpFlexible(4);
+    } else {
+        if (Lcg::randMain(2) != 0) {
             return false;
         }
-    } else{
-        return false;
+        Lcg::randMainJumpFlexible(3);
     }
 
-    Lcg::randMainJumpFlexible(5);
-//    Lcg::randMainNop();
-//    if (Lcg::randMain(2) == 1){
-//        Lcg::randMainNop();
-//    }
+    Lcg::randMainJumpFlexible(4);
 
-    Lcg::randMainJumpFlexible(2);
-    if (Lcg::randMain(2) != 1){
-        return false;
-    }
-    //Lcg::randMainJumpFlexible(8);
 
-    Lcg::randMainJumpFlexible(5);
-    Lcg::randMainNop();
-    if (Lcg::randMain(2) == 1){
-        Lcg::randMainNop();
-    }
-    //Lcg::randMainJumpFlexible(6);
-    if (Lcg::randMain(2) != 1){
-        return false;
-    }
-
-    Lcg::randMainJumpFlexible(8);
-    if (Lcg::randMain(2) != 1){
-        return false;
-    }
-
-    if (enc1GId == 45 && enc1GCount == 1 &&
-        enc2GId == 0) {//&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
-        Lcg::randMainJumpFlexible(52);
-        if (Lcg::randMain(256) != 0){
-            return false;
+    if (ad < as) {
+        if (A) {
+            Lcg::randMainJumpFlexible(7);
+            Lcg::randMainNop();
+            if (Lcg::randMain(2) != 0) {
+                return false;
+            }
+            Lcg::randMainJumpFlexible(7);
+        } else {
+            Lcg::randMainJumpFlexible(4);
         }
+        if (doodian) {
+            Lcg::randMainNop();
+            if (Lcg::randMain(2) == 0) {
+                return false;
+            }
+            Lcg::randMainJumpFlexible(7);
+        } else {
+            Lcg::randMainJumpFlexible(4);
+        }
+    } else {
+        if (doodian) {
+            Lcg::randMainJumpFlexible(7);
+            Lcg::randMainNop();
+            if (Lcg::randMain(2) == 0) {
+                return false;
+            }
+            Lcg::randMainJumpFlexible(7);
+        } else {
+            Lcg::randMainJumpFlexible(4);
+        }
+
+        if (A) {
+            Lcg::randMainNop();
+            if (Lcg::randMain(2) != 0) {
+                return false;
+            }
+            Lcg::randMainJumpFlexible(7);
+        } else {
+            Lcg::randMainJumpFlexible(4);
+        }
+    }
+
+    Lcg::randMainJumpFlexible(50);
+    if (Lcg::randMain(256) != 0) {
+        return false;
+    }
+
+
+    if (tomadoi && enc1GId == 45 && enc1GCount == 1 &&
+        enc2GId == 0) {
         return true;
     }
+
+
     return false;
+
+    // auto ac = Lcg::randMain(256);
+    // if (ac <= 42){
+    //     return false;// flee
+    // }
+    // auto attack = false;
+    // if (ac <= 84){
+    //     attack = true;
+    //     Lcg::randMainJumpFlexible(2);
+    // }
+    // if (ac >= 85&&ac <= 127){
+    //     return false;// flee
+    // }
+    // auto mera = false;
+    // if (ac >= 128&&ac <= 170){
+    //     mera = true;
+    //     Lcg::randMainNop();
+    // }
+    // if (ac >= 171&&ac <= 212){
+    //     return false;
+    // }
+    // if (ac >= 213&&ac <= 256){
+    //     attack = true;
+    //     Lcg::randMainJumpFlexible(2);
+    // }
+    //
+    // auto test = Lcg::randMain(2); // 0x02131e75
+    // if (test == 0){
+    //     //Lcg::randMainJumpFlexible(5);
+    // }else{
+    //     return false; // 役に立たないなんかする
+    // }
+    //
+    // if (mera){
+    //     Lcg::randMainJumpFlexible(5);
+    //     Lcg::randMainJumpFlexible(5);
+    // }
+    //
+    // if (attack){
+    //     //Lcg::randMainJumpFlexible(12);
+    //     Lcg::randMainJumpFlexible(5);
+    //     Lcg::randMainJumpFlexible(7);
+    // }
+    //
+    // if (as >= ad){
+    //     Lcg::randMainJumpFlexible(4);
+    //     if (Lcg::randMain(2) != 1){
+    //         return false;
+    //     }
+    //     //Lcg::randMainJumpFlexible(8);
+    //
+    //     Lcg::randMainJumpFlexible(5);
+    //     Lcg::randMainNop();
+    //     if (Lcg::randMain(2) == 1){
+    //         Lcg::randMainNop();
+    //     }
+    //     //Lcg::randMainJumpFlexible(6);
+    //     if (Lcg::randMain(2) != 1){
+    //         return false;
+    //     }
+    //
+    //     Lcg::randMainJumpFlexible(8);
+    //     if (Lcg::randMain(2) != 1){
+    //         return false;
+    //     }
+    //
+    //     if (enc1GId == 45 && enc1GCount == 1 &&
+    //         enc2GId == 0) {
+    //         return true;
+    //     }else{
+    //         return false;
+    //     }
+    // } else{
+    //     return false;
+    // }
+    //
+    // Lcg::randMainJumpFlexible(5);
+    // //    Lcg::randMainNop();
+    // //    if (Lcg::randMain(2) == 1){
+    // //        Lcg::randMainNop();
+    // //    }
+    //
+    // Lcg::randMainJumpFlexible(2);
+    // if (Lcg::randMain(2) != 1) {
+    //     return false;
+    // }
+    // //Lcg::randMainJumpFlexible(8);
+    //
+    // Lcg::randMainJumpFlexible(5);
+    // Lcg::randMainNop();
+    // if (Lcg::randMain(2) == 1) {
+    //     Lcg::randMainNop();
+    // }
+    // //Lcg::randMainJumpFlexible(6);
+    // if (Lcg::randMain(2) != 1) {
+    //     return false;
+    // }
+    //
+    // Lcg::randMainJumpFlexible(8);
+    // if (Lcg::randMain(2) != 1) {
+    //     return false;
+    // }
+    //
+    // if (enc1GId == 45 && enc1GCount == 1 &&
+    //     enc2GId == 0) {
+    //     //&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
+    //     Lcg::randMainJumpFlexible(52);
+    //     if (Lcg::randMain(256) != 0) {
+    //         return false;
+    //     }
+    //     return true;
+    // }
+    // return false;
 }
 
 
@@ -551,10 +631,12 @@ int main() {
                         std::uint32_t encodeTime2 = DeteUtility::encodeTime(h, min, 10);
                         uint32_t seed = base1 + encodedDate2 + encodeTime2;
                         //if (!known_values.contains(seed)) {
-                            //known_values.insert(seed);
-                            if (EmulationMain(seed)) {
-                                std::cout << seed << ", " << y << "/" << m << "/" << d << " " << h << ":" << min  << ":10"  << ", " << std::hex << "0x" << encodedDate2 << ", " << encodeTime2 << std::dec << std::endl;
-                            }
+                        //known_values.insert(seed);
+                        if (EmulationMain(seed, false, false, false)) {
+                            std::cout << seed << ", " << y << "/" << m << "/" << d << " " << h << ":" << min << ":10" <<
+                                    ", " << std::hex << "0x" << encodedDate2 << ", " << encodeTime2 << std::dec <<
+                                    std::endl;
+                        }
                         //}
                     }
                 }
@@ -562,49 +644,49 @@ int main() {
         }
     }
 
-//    Lcg::randInit(2208400884);
-//    Lcg::randMainJumpFlexible(174477);
-//    Lcg::randMainJumpFlexible(86975);
-//    for (int i = 0; i < 500; ++i) {
-//        if (Lcg::randMain(256) == 0){
-//            std::cout << Lcg::getPosition() << std::endl;
-//        }
-//    }
+    //    Lcg::randInit(2208400884);
+    //    Lcg::randMainJumpFlexible(174477);
+    //    Lcg::randMainJumpFlexible(86975);
+    //    for (int i = 0; i < 500; ++i) {
+    //        if (Lcg::randMain(256) == 0){
+    //            std::cout << Lcg::getPosition() << std::endl;
+    //        }
+    //    }
 
 
-//    Lcg::randInit(2208400884);
-//    Lcg::randMainJumpFlexible(174477);
+    //    Lcg::randInit(2208400884);
+    //    Lcg::randMainJumpFlexible(174477);
 
-//    for (int i = 0; i < 10; ++i) {
-//        std::cout << Lcg::getNowSeed() << std::endl;
-//        Lcg::randMainNop();
-//    }
+    //    for (int i = 0; i < 10; ++i) {
+    //        std::cout << Lcg::getNowSeed() << std::endl;
+    //        Lcg::randMainNop();
+    //    }
 
-//    uint32_t currentSeed = Lcg::getNowSeed();
-//    for (uint32_t i = 0; i < 9; ++i) {
-//        auto cuseed1 = currentSeed;
-//        for (uint32_t j = 0; j < 9; ++j) {
-//            EmulationMain(currentSeed);
-//            auto enc1GId = mem_active[DynamicOffset(0xe4)];
-//            if (enc1GId == 45) {
-//                std::cout << i << ", " << j << "," << Lcg::getPosition() << std::endl;
-//            }
-//
-//            Lcg::randInit(currentSeed);
-//            auto test = Lcg::randMain(2);
-//            currentSeed = Lcg::randMainNop();
-//            if (test == 0) {
-//                currentSeed = Lcg::randMainNop();
-//            }
-//        }
-//        Lcg::randInit(cuseed1);
-//        Lcg::randMainJump100(11+1);
-//        currentSeed = Lcg::getNowSeed();
-//    }
+    //    uint32_t currentSeed = Lcg::getNowSeed();
+    //    for (uint32_t i = 0; i < 9; ++i) {
+    //        auto cuseed1 = currentSeed;
+    //        for (uint32_t j = 0; j < 9; ++j) {
+    //            EmulationMain(currentSeed);
+    //            auto enc1GId = mem_active[DynamicOffset(0xe4)];
+    //            if (enc1GId == 45) {
+    //                std::cout << i << ", " << j << "," << Lcg::getPosition() << std::endl;
+    //            }
+    //
+    //            Lcg::randInit(currentSeed);
+    //            auto test = Lcg::randMain(2);
+    //            currentSeed = Lcg::randMainNop();
+    //            if (test == 0) {
+    //                currentSeed = Lcg::randMainNop();
+    //            }
+    //        }
+    //        Lcg::randInit(cuseed1);
+    //        Lcg::randMainJump100(11+1);
+    //        currentSeed = Lcg::getNowSeed();
+    //    }
 #else
 
 
-    EmulationMain(2142404527);
+    EmulationMain(2141499162, false, false ,false);
 
     std::cout << std::dec << mem_active[DynamicOffset(0xe4)] << "," << mem_active[DynamicOffset(0xec)] << std::endl;
     std::cout << std::dec << mem_active[DynamicOffset(0xe4 + 1 * 2)] << "," << mem_active[DynamicOffset(0xec + 1 * 2)]
@@ -623,4 +705,3 @@ int main() {
 
     return 0;
 }
-
