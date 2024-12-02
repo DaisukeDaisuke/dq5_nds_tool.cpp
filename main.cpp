@@ -403,21 +403,6 @@ bool EmulationMain(uint32_t seed) {
     } else {
         Lcg::randMain(0x20);
     }
-//    Lcg::randMainNop();
-//    auto a = Lcg::randMain(41);
-//    auto ad = Lcg::randMain(41);
-//    auto ap = Lcg::randMain(41);
-//
-//    auto tmp = std::max(std::max(a, ad), ap);
-//    if(tmp == ap){
-//        return false;
-//    }
-//
-//    auto jmp = 6;
-//    if (tmp == ad){
-//        jmp = 10;
-//    }
-
     //Lcg::randMainNop();
     //Lcg::randMainJumpFlexible(4);
 
