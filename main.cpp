@@ -15,6 +15,7 @@ constexpr uint64_t MODULO = 0xFFFFFFFFFFFFFFFF;
 // 総当たり回数カウント
 uint64_t totalMatches = 0;
 
+
 // 線形合同法 (LCG)
 uint64_t lcg_rand(uint64_t seed) {
     return (seed * MULTIPLIER + INCREMENT) & MODULO;
@@ -28,30 +29,37 @@ int fastCalculatePercent(uint64_t input) {
     return static_cast<int>((output * 100) >> 32);
 }
 
-int main() {
-    for (int i = 0; i < ARRAY_SIZE; ++i) {
-        now_seed = lcg_rand(now_seed);
-        precalculatedValues[i] = fastCalculatePercent(now_seed);
-        if (i <= 12){
-            continue;
-        }
-        if (precalculatedValues[i-3*4] > 15){
-            continue;
-        }
-        if (precalculatedValues[i-3*3] > 14){
-            continue;
-        }
-        if (precalculatedValues[i-3*2] > 14){
-            continue;
-        }
-        if (precalculatedValues[i-3*1] > 14){
-            continue;
-        }
-        if (precalculatedValues[i] > 14){
-            continue;
-        }
-        std::cout << i << std::endl;
-        //break;
+double IntToFloat(int value) {
+    return static_cast<double>(value);
+}
+
+double floatRand(double min, double max) {
+    return min + (max - min) * 0;
+}
+
+double FUN_02075930(int kiyousa, double batomasu, double sukiru, double taisei,
+                    int number_of_attack) {
+    if (kiyousa >= 150){
+        kiyousa = kiyousa - 150;
+    }else{
+        kiyousa = 0;
     }
+    return taisei * (IntToFloat(kiyousa) * 0.01 + 2.0 + batomasu + sukiru) / IntToFloat(number_of_attack);
+}
+
+double FUN_021da720(int PlayerLevel) {
+    auto level = static_cast<double>(PlayerLevel);
+    double base = (level * level / 23) + 100;
+    base = base + base * floatRand(-0.05, 0.05);
+    auto guarantee = 217 * floatRand(0.9, 1.1);
+    if (guarantee > base) {
+        return base;
+    }
+    return base;
+}
+
+
+int main() {
+    std::cout << FUN_021da720(99) << std::endl;
     return 0;
 }
