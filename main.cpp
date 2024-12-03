@@ -35,9 +35,9 @@ constexpr int getMemConst(uint32_t offset) {
 
 
 constexpr int mem[0xf8] = {
-    0x00000016,
-    0x0000000d,
-    0x00000003,
+    0x00000032,
+    0x0000001b,
+    0x00000002,
     00000000,
     0x00000001,
     00000000,
@@ -47,67 +47,67 @@ constexpr int mem[0xf8] = {
     00000000,
     0x0000000a,
     00000000,
+    0x00000002,
     00000000,
+    0x00000004,
     00000000,
-    0x00000002, //14 = 0 * 0xc + 0x1c
-    00000000,
-    0x00000033,
-    00000000,
-    0x00000003,
-    00000000,
-    0x00000004, //20 = 1 * 0xc + 0x1c
-    00000000,
-    0x00000034,
+    0x00000074,
     00000000,
     0x00000003,
     00000000,
-    0x00000004, //26 = 2 * 0xc + 0x1c
+    0x00000004,
     00000000,
-    0x00000037,
+    0x00000079,
     00000000,
     0x00000003,
     00000000,
-    0x00000004, //32 = 3 * 0xc + 0x1c
+    0x00000004,
     00000000,
-    0x0000002d,
+    0x0000007a,
+    00000000,
+    0x00000004,
+    00000000,
+    0x00000004,
+    00000000,
+    0x00000078,
+    00000000,
+    0x00000003,
+    00000000,
+    0x00000003,
+    00000000,
+    0x0000004b,
     00000000,
     0x00000002,
     00000000,
-    0x00000004, //38 = 4 * 0xc + 0x1c
+    0x00000002,
     00000000,
-    0x00000028,
+    0x00000074,
+    00000000,
+    0x00000007,
     00000000,
     0x00000004,
     00000000,
-    0x00000002, //44 = 5 * 0xc + 0x1c
+    0x00000079,
     00000000,
-    0x00000033,
+    0x00000007,
+    00000000,
+    0x00000004,
+    00000000,
+    0x0000007a,
+    00000000,
+    0x00000007,
+    00000000,
+    0x00000004,
+    00000000,
+    0x00000078,
+    00000000,
+    0x00000007,
+    00000000,
+    0x00000004,
+    00000000,
+    0x0000007a,
     00000000,
     0x00000006,
-    00000000,
-    0x00000004, //50 = 6 * 0xc + 0x1c
-    00000000,
-    0x00000034,
-    00000000,
-    0x00000005,
-    00000000,
-    0x00000004, //56 = 7 * 0xc + 0x1c
-    00000000,
-    0x00000037,
-    00000000,
-    0x00000005,
-    00000000,
-    0x00000004, //62 = 8 * 0xc + 0x1c
-    00000000,
-    0x0000002d,
-    00000000,
-    0x00000004,
-    00000000,
-    0x00000004, //68 = 9 * 0xc + 0x1c
-    00000000,
-    0x000000de,
-    00000000,
-    0x00000008,
     00000000,
     00000000,
     00000000,
@@ -141,6 +141,7 @@ constexpr int mem[0xf8] = {
 };
 int mem_active[0xf8] = {0};
 
+constexpr int encmem1G[4] = {0x00000003, 0x00000002, 0x00000001, 0x00000002}; //FUN_020356a8_read_enc2
 
 template<size_t offset>
 constexpr size_t BYTE_OFFSET() {
@@ -191,7 +192,6 @@ constexpr auto gen_mon_list() {
     return std::make_pair(list, counter); // 配列とカウンタのペアを返す
 }
 
-constexpr int encmem1G[4] = {3, 0, 0, 2}; //FUN_020356a8_read_enc2
 
 template<int size>
 constexpr auto gen_mon_list1G() {
@@ -328,6 +328,7 @@ void processEnc() {
 
     if (selected == 10) {
         // FUN_02035598
+        std::cout << "!!";
         //todo 拡張データーロード
     } else if (selected > 4 && selected < 10) {
         //FUN_0203562c
@@ -367,7 +368,7 @@ bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
     int counter = 0;
     while (stepCounter >= 0) {
         processEnc();
-        stepCounter -= 529;
+        stepCounter -= 396;
         counter++;
 #ifdef DEBUG
         std::cout << "=======" << std::endl;
@@ -386,15 +387,19 @@ bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
     auto enc3GId = mem_active[DynamicOffset(0xe4 + 2 * 2)];
     auto enc3GCount = mem_active[DynamicOffset(0xec + 2 * 2)];
 
+    auto enc4GId = mem_active[DynamicOffset(0xe4 + 3 * 2)];
+    auto enc4GCount = mem_active[DynamicOffset(0xec + 3 * 2)];
+
     //auto count = (enc1GCount + enc2GCount + enc3GCount) * 2;
     auto count = enc1GCount + enc2GCount + enc3GCount;
     Lcg::randMainJump86785();
     //Lcg::randMainJumpFlexible(count);
     for (int i = 0; i < count; ++i) {
         Lcg::randMainNop();
-        if (Lcg::randMain(25) > 8) {
-            return false;
-        }
+        Lcg::randMainNop();
+        // if (Lcg::randMain(25) > 8) {
+        //     return false;
+        // }
     }
 
     auto tomadoi = false;
@@ -404,204 +409,46 @@ bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
         Lcg::randMain(0x20);
     }
     Lcg::randMainNop();
-    //Lcg::randMainJumpFlexible(4);
 
-    auto as = Lcg::randIntRange(170, 20, 20); // A
-    auto ad = Lcg::randIntRange(200, 20, 20);
-    auto ap = Lcg::randIntRange(400, 20, 20);
-    //auto ms = Lcg::randIntRange(1150, 20, 20);
+    auto a = Lcg::randIntRange(340, 20, 20);
+    auto b = Lcg::randIntRange(650, 20, 20);
+    auto c = Lcg::randIntRange(600, 20, 20);
 
 
-    //Lcg::randMainJumpFlexible(2);
-
-    if (adams) {
-        if (Lcg::randMain(2) != 0) {
+    if (b > c) {
+        Lcg::randMainJumpFlexible(7);
+        if (Lcg::randMain(2) != 1) {
             return false;
         }
         Lcg::randMainJumpFlexible(8);
-        if (Lcg::randMain(2) != 0) {
+    } else {
+        Lcg::randMainJumpFlexible(7);
+        if (Lcg::randMain(2) != 1) {
             return false;
         }
+        Lcg::randMainJumpFlexible(8);
+
         Lcg::randMainJumpFlexible(4);
-    } else {
-        if (Lcg::randMain(2) != 0) {
+        if (Lcg::randMain(2) != 1) {
             return false;
         }
-        Lcg::randMainJumpFlexible(3);
+        Lcg::randMainJumpFlexible(5);
+
+        Lcg::randMainJumpFlexible(4);
+        if (Lcg::randMain(2) != 1) {
+            return false;
+        }
+
     }
 
-    Lcg::randMainJumpFlexible(4);
-
-
-    if (ad < as) {
-        if (A) {
-            Lcg::randMainJumpFlexible(7);
-            Lcg::randMainNop();
-            if (Lcg::randMain(2) != 0) {
-                return false;
-            }
-            Lcg::randMainJumpFlexible(7);
-        } else {
-            Lcg::randMainJumpFlexible(4);
-        }
-        if (doodian) {
-            Lcg::randMainNop();
-            if (Lcg::randMain(2) == 0) {
-                return false;
-            }
-            Lcg::randMainJumpFlexible(7);
-        } else {
-            Lcg::randMainJumpFlexible(4);
-        }
-    } else {
-        if (doodian) {
-            Lcg::randMainJumpFlexible(7);
-            Lcg::randMainNop();
-            if (Lcg::randMain(2) == 0) {
-                return false;
-            }
-            Lcg::randMainJumpFlexible(7);
-        } else {
-            Lcg::randMainJumpFlexible(4);
-        }
-
-        if (A) {
-            Lcg::randMainNop();
-            if (Lcg::randMain(2) != 0) {
-                return false;
-            }
-            Lcg::randMainJumpFlexible(7);
-        } else {
-            Lcg::randMainJumpFlexible(4);
-        }
-    }
-
-    Lcg::randMainJumpFlexible(50);
-    if (Lcg::randMain(256) != 0) {
-        return false;
-    }
-
-
-    if (tomadoi && enc1GId == 45 && enc1GCount == 1 &&
-        enc2GId == 0) {
+    //std::cout << enc1GId << std::endl;
+    if (tomadoi && enc1GId == 75 && enc1GCount >= 2 && enc2GId == 75 && enc2GCount >= 2 && enc3GId == 0 && enc4GId ==
+        0) {
         return true;
     }
 
 
     return false;
-
-    // auto ac = Lcg::randMain(256);
-    // if (ac <= 42){
-    //     return false;// flee
-    // }
-    // auto attack = false;
-    // if (ac <= 84){
-    //     attack = true;
-    //     Lcg::randMainJumpFlexible(2);
-    // }
-    // if (ac >= 85&&ac <= 127){
-    //     return false;// flee
-    // }
-    // auto mera = false;
-    // if (ac >= 128&&ac <= 170){
-    //     mera = true;
-    //     Lcg::randMainNop();
-    // }
-    // if (ac >= 171&&ac <= 212){
-    //     return false;
-    // }
-    // if (ac >= 213&&ac <= 256){
-    //     attack = true;
-    //     Lcg::randMainJumpFlexible(2);
-    // }
-    //
-    // auto test = Lcg::randMain(2); // 0x02131e75
-    // if (test == 0){
-    //     //Lcg::randMainJumpFlexible(5);
-    // }else{
-    //     return false; // 役に立たないなんかする
-    // }
-    //
-    // if (mera){
-    //     Lcg::randMainJumpFlexible(5);
-    //     Lcg::randMainJumpFlexible(5);
-    // }
-    //
-    // if (attack){
-    //     //Lcg::randMainJumpFlexible(12);
-    //     Lcg::randMainJumpFlexible(5);
-    //     Lcg::randMainJumpFlexible(7);
-    // }
-    //
-    // if (as >= ad){
-    //     Lcg::randMainJumpFlexible(4);
-    //     if (Lcg::randMain(2) != 1){
-    //         return false;
-    //     }
-    //     //Lcg::randMainJumpFlexible(8);
-    //
-    //     Lcg::randMainJumpFlexible(5);
-    //     Lcg::randMainNop();
-    //     if (Lcg::randMain(2) == 1){
-    //         Lcg::randMainNop();
-    //     }
-    //     //Lcg::randMainJumpFlexible(6);
-    //     if (Lcg::randMain(2) != 1){
-    //         return false;
-    //     }
-    //
-    //     Lcg::randMainJumpFlexible(8);
-    //     if (Lcg::randMain(2) != 1){
-    //         return false;
-    //     }
-    //
-    //     if (enc1GId == 45 && enc1GCount == 1 &&
-    //         enc2GId == 0) {
-    //         return true;
-    //     }else{
-    //         return false;
-    //     }
-    // } else{
-    //     return false;
-    // }
-    //
-    // Lcg::randMainJumpFlexible(5);
-    // //    Lcg::randMainNop();
-    // //    if (Lcg::randMain(2) == 1){
-    // //        Lcg::randMainNop();
-    // //    }
-    //
-    // Lcg::randMainJumpFlexible(2);
-    // if (Lcg::randMain(2) != 1) {
-    //     return false;
-    // }
-    // //Lcg::randMainJumpFlexible(8);
-    //
-    // Lcg::randMainJumpFlexible(5);
-    // Lcg::randMainNop();
-    // if (Lcg::randMain(2) == 1) {
-    //     Lcg::randMainNop();
-    // }
-    // //Lcg::randMainJumpFlexible(6);
-    // if (Lcg::randMain(2) != 1) {
-    //     return false;
-    // }
-    //
-    // Lcg::randMainJumpFlexible(8);
-    // if (Lcg::randMain(2) != 1) {
-    //     return false;
-    // }
-    //
-    // if (enc1GId == 45 && enc1GCount == 1 &&
-    //     enc2GId == 0) {
-    //     //&&enc2GCount == 2&&enc3GId == 45&&enc3GCount == 2 && enc2GCount == 1
-    //     Lcg::randMainJumpFlexible(52);
-    //     if (Lcg::randMain(256) != 0) {
-    //         return false;
-    //     }
-    //     return true;
-    // }
-    // return false;
 }
 
 
@@ -686,7 +533,22 @@ int main() {
 #else
 
 
-    EmulationMain(2141499162, false, false ,false);
+    auto y = 2024, m = 12, d = 3;
+    auto h = 14, min = 5;
+    std::uint32_t encodedDate2 = DeteUtility::encodeDate(y, m, d);
+    std::uint32_t encodeTime2 = DeteUtility::encodeTime(h, min, 10);
+    uint32_t seed1 = base1 + encodedDate2 + encodeTime2;
+    uint32_t seed2 = base1 + encodedDate2;
+    std::cout << std::hex << seed1 << ", " << encodedDate2 << ", " << encodeTime2 << std::dec << std::endl;
+    std::cout << std::hex << seed2 << std::dec << std::endl;
+    return 0;
+
+    Lcg::randInit(2227596263);
+    Lcg::randMainJumpFlexible(87041);
+    auto seed = Lcg::getNowSeed();
+
+
+    EmulationMain(2227596263, false, false ,false);
 
     std::cout << std::dec << mem_active[DynamicOffset(0xe4)] << "," << mem_active[DynamicOffset(0xec)] << std::endl;
     std::cout << std::dec << mem_active[DynamicOffset(0xe4 + 1 * 2)] << "," << mem_active[DynamicOffset(0xec + 1 * 2)]
