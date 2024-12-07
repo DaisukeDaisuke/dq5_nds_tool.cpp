@@ -410,39 +410,55 @@ bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
     }
     Lcg::randMainNop();
 
-    auto a = Lcg::randIntRange(340, 20, 20);
+    auto a = Lcg::randIntRange(900, 20, 20);
     auto b = Lcg::randIntRange(650, 20, 20);
-    auto c = Lcg::randIntRange(600, 20, 20);
-
-
-    if (b > c) {
-        Lcg::randMainJumpFlexible(7);
-        if (Lcg::randMain(2) != 1) {
-            return false;
-        }
-        Lcg::randMainJumpFlexible(8);
-    } else {
-        Lcg::randMainJumpFlexible(7);
-        if (Lcg::randMain(2) != 1) {
-            return false;
-        }
-        Lcg::randMainJumpFlexible(8);
-
-        Lcg::randMainJumpFlexible(4);
-        if (Lcg::randMain(2) != 1) {
-            return false;
-        }
-        Lcg::randMainJumpFlexible(5);
-
-        Lcg::randMainJumpFlexible(4);
-        if (Lcg::randMain(2) != 1) {
-            return false;
-        }
-
+    auto c = Lcg::randIntRange(350, 20, 20);
+    auto ca = Lcg::randIntRange(350, 20, 20);
+    Lcg::randMainJumpFlexible(8);
+    if (Lcg::randMain(6) != 0) {
+        return false;
+    }
+    if (Lcg::randMain(2) != 1) {
+        return false;
+    }
+    Lcg::randMainJumpFlexible(7);
+    if (Lcg::randMain(6) != 0) {
+        return false;
+    }
+    if (Lcg::randMain(2) != 1) {
+        return false;
     }
 
+
+
+    // if (b > c) {
+    //     Lcg::randMainJumpFlexible(7);
+    //     if (Lcg::randMain(2) != 1) {
+    //         return false;
+    //     }
+    //     Lcg::randMainJumpFlexible(8);
+    // } else {
+    //     Lcg::randMainJumpFlexible(7);
+    //     if (Lcg::randMain(2) != 1) {
+    //         return false;
+    //     }
+    //     Lcg::randMainJumpFlexible(8);
+    //
+    //     Lcg::randMainJumpFlexible(4);
+    //     if (Lcg::randMain(2) != 1) {
+    //         return false;
+    //     }
+    //     Lcg::randMainJumpFlexible(5);
+    //
+    //     Lcg::randMainJumpFlexible(4);
+    //     if (Lcg::randMain(2) != 1) {
+    //         return false;
+    //     }
+    //
+    // }
+
     //std::cout << enc1GId << std::endl;
-    if (tomadoi && enc1GId == 75 && enc1GCount >= 2 && enc2GId == 75 && enc2GCount >= 2 && enc3GId == 0 && enc4GId ==
+    if (tomadoi && enc1GId == 75 && enc1GCount >= 2 && enc2GId == 75 && enc2GCount >= 1 && enc3GId == 0 && enc4GId ==
         0) {
         return true;
     }
