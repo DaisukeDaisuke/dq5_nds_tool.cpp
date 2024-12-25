@@ -421,13 +421,13 @@ bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
     if (Lcg::randMain(2) != 1) {
         return false;
     }
-    Lcg::randMainJumpFlexible(7);
-    if (Lcg::randMain(6) != 0) {
-        return false;
-    }
-    if (Lcg::randMain(2) != 1) {
-        return false;
-    }
+    // Lcg::randMainJumpFlexible(7);
+    // if (Lcg::randMain(32) != 0) {
+    //     return false;
+    // }
+    // if (Lcg::randMain(2) != 1) {
+    //     return false;
+    // }
 
 
 
