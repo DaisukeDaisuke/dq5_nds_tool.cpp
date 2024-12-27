@@ -173,9 +173,10 @@ std::uint32_t encodeTime(int hour, int minute, int second) {
 // TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 int main() {
-    int list1[5] = {9, 10, 11, 12, 0};
+    int list1[5] = {52, 49, 43, 2, 29};
+    int list4[5] = {36, 23, 22, 11, 13};
 
-    for (uint64_t seed = 0; seed < UINT32_MAX-1; ++seed) {
+    for (uint64_t seed = 0; seed < UINT32_MAX - 1; ++seed) {
         Lcg::randInit(seed);
         int list[5] = {-1, -1, -1, -1, -1};
         for (auto i = 0; i < 5; ++i) {
@@ -193,7 +194,25 @@ int main() {
                 break;
             }
             if (i == 4) {
-                std::cout << "found: "<< seed << std::endl;
+                std::cout << "found: " << seed << std::endl;
+                int list2[5] = {-1, -1, -1, -1, -1};
+                for (auto i = 0; i < 5; ++i) {
+                    rand = Lcg::randMain(0x35);
+                    for (int k = 0; k < 5; ++k) {
+                        if (rand == list[k] || list2[k] == rand) {
+                            rand = Lcg::randMain(0x35);
+                            k = 0;
+                        }
+                    }
+                    list2[i] = list[i];
+                    list[i] = rand;
+                    if (list4[i] != rand) {
+                        break;
+                    }
+                    if (i == 4) {
+                        std::cout << "found: " << seed << std::endl;
+                    }
+                }
             }
         }
     }
