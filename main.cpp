@@ -173,41 +173,29 @@ std::uint32_t encodeTime(int hour, int minute, int second) {
 // TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 int main() {
-    Lcg::randInit(0xD781f163);
+    int list1[5] = {9, 10, 11, 12, 0};
 
-
-    int list[5] = {-1, -1, -1, -1, -1};
-    auto r9 = 0;
-    for (auto i = 0; i < 5; ++i) {
-        auto rand = Lcg::randMain(0x35);
-        if (0 < i) {
-            for (int j = 0; j < i; ++j) {
-                if (rand == list[j]) {
-                    rand = Lcg::randMain(0x35);
-                    j = 0;
+    for (uint64_t seed = 0; seed < UINT32_MAX-1; ++seed) {
+        Lcg::randInit(seed);
+        int list[5] = {-1, -1, -1, -1, -1};
+        for (auto i = 0; i < 5; ++i) {
+            auto rand = Lcg::randMain(0x35);
+            if (0 < i) {
+                for (int j = 0; j < i; ++j) {
+                    if (rand == list[j]) {
+                        rand = Lcg::randMain(0x35);
+                        j = 0;
+                    }
                 }
             }
-        }
-        list[i] = rand;
-    }
-
-
-    auto rand = -1;
-    int list2[5] = {-1, -1, -1, -1, -1};
-    for (auto i = 0; i < 5; ++i) {
-        rand = Lcg::randMain(0x35);
-        for (int k = 0; k < 5; ++k) {
-            if (rand == list[k] || list2[k] == rand) {
-                rand = Lcg::randMain(0x35);
-                k = 0;
+            list[i] = rand;
+            if (rand != list1[i]) {
+                break;
+            }
+            if (i == 4) {
+                std::cout << "found: "<< seed << std::endl;
             }
         }
-        list2[i] = list[i];
-        list[i] = rand;
-    }
-
-    for (auto i = 0; i < 5; ++i) {
-        std::cout << list[i] << std::endl;
     }
     return 0;
 }
