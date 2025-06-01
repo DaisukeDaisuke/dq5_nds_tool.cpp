@@ -35,9 +35,9 @@ constexpr int getMemConst(uint32_t offset) {
 
 
 constexpr int mem[0xf8] = {
-    0x00000032,
-    0x0000001b,
-    0x00000002,
+    0x00000017,
+    0x0000000e,
+    0x00000003,
     00000000,
     0x00000001,
     00000000,
@@ -47,65 +47,65 @@ constexpr int mem[0xf8] = {
     00000000,
     0x0000000a,
     00000000,
-    0x00000002,
+    00000000,
     00000000,
     0x00000004,
     00000000,
-    0x00000074,
-    00000000,
-    0x00000003,
-    00000000,
-    0x00000004,
-    00000000,
-    0x00000079,
-    00000000,
-    0x00000003,
-    00000000,
-    0x00000004,
-    00000000,
-    0x0000007a,
-    00000000,
-    0x00000004,
-    00000000,
-    0x00000004,
-    00000000,
-    0x00000078,
+    0x00000035,
     00000000,
     0x00000003,
     00000000,
     0x00000003,
     00000000,
-    0x0000004b,
+    0x00000020,
+    00000000,
+    0x00000003,
+    00000000,
+    0x00000004,
+    00000000,
+    0x0000003a,
     00000000,
     0x00000002,
     00000000,
+    0x00000005,
+    00000000,
+    0x00000026,
+    00000000,
+    0x00000003,
+    00000000,
     0x00000002,
     00000000,
-    0x00000074,
+    0x00000034, //
     00000000,
-    0x00000007,
-    00000000,
-    0x00000004,
-    00000000,
-    0x00000079,
-    00000000,
-    0x00000007,
+    0x00000003,
     00000000,
     0x00000004,
     00000000,
-    0x0000007a,
+    0x00000035,
     00000000,
-    0x00000007,
+    0x00000005,
+    00000000,
+    0x00000003,
+    00000000,
+    0x00000020,
+    00000000,
+    0x00000006,
     00000000,
     0x00000004,
     00000000,
-    0x00000078,
+    0x0000003a,
     00000000,
-    0x00000007,
+    0x00000005,
     00000000,
     0x00000004,
     00000000,
-    0x0000007a,
+    0x00000026,
+    00000000,
+    0x00000007,
+    00000000,
+    0x00000003,
+    00000000,
+    0x00000034,
     00000000,
     0x00000006,
     00000000,
@@ -141,7 +141,7 @@ constexpr int mem[0xf8] = {
 };
 int mem_active[0xf8] = {0};
 
-constexpr int encmem1G[4] = {0x00000003, 0x00000002, 0x00000001, 0x00000002}; //FUN_020356a8_read_enc2
+constexpr int encmem1G[4] = {0x00000003, 0x00000002, 0x00000000, 0x00000002}; //FUN_020356a8_read_enc2
 
 template<size_t offset>
 constexpr size_t BYTE_OFFSET() {
@@ -246,7 +246,7 @@ constexpr int64_t enc_walk[0x1f] = {
     0xffffff68 - 0xffffffffLL - 1,
     0xffffff9b - 0xffffffffLL - 1,
     0xffffffcd - 0xffffffffLL - 1,
-    0,
+    -1,
     0x00000032,
     0x00000064,
     0x00000097,
@@ -277,6 +277,7 @@ bool FUN_02035740(int param2, int param3) {
                 CheckDynamicOffset(var2 + 0xec);
                 CheckDynamicOffset(var2 + 0xf4);
                 CheckDynamicOffset(var2 + 0xf4);
+                //std::cout << mem_active[DynamicOffset(param2 * 0xc + 0x20)] << std::endl;
                 mem_active[DynamicOffset(var2 + 0xe4)] = mem_active[DynamicOffset(param2 * 0xc + 0x20)]; // モンスター id
                 mem_active[DynamicOffset(var2 + 0xec)] = mem_active[DynamicOffset(var2 + 0xec)] + 1; // モンスター数
                 mem_active[DynamicOffset(var2 + 0xf4)] = param2;
@@ -360,15 +361,16 @@ int stepCounter = 0;
 
 bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
     Lcg::randInit(seed);
-    processEnc();
+    //processEnc();
     stepCounter = 0x1e00;
     auto rand = Lcg::randMain(31);
     stepCounter += static_cast<int>(enc_walk[rand]);
 
     int counter = 0;
     while (stepCounter >= 0) {
+        //std::cout << std::hex << stepCounter << std::dec << std::endl;
         processEnc();
-        stepCounter -= 396;
+        stepCounter -= 384;
         counter++;
 #ifdef DEBUG
         std::cout << "=======" << std::endl;
@@ -410,17 +412,26 @@ bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
     }
     Lcg::randMainNop();
 
-    auto a = Lcg::randIntRange(900, 20, 20);
-    auto b = Lcg::randIntRange(650, 20, 20);
-    auto c = Lcg::randIntRange(350, 20, 20);
-    auto ca = Lcg::randIntRange(350, 20, 20);
-    Lcg::randMainJumpFlexible(8);
-    if (Lcg::randMain(6) != 0) {
-        return false;
+    if (tomadoi && enc1GId == 38 && enc1GCount == 1 && enc2GId == 58 && enc2GCount == 1) {
+        return true;
     }
-    if (Lcg::randMain(2) != 1) {
-        return false;
+
+    if (tomadoi && enc1GId == 58 && enc1GCount == 1 && enc2GId == 32 && enc2GCount == 1) {
+        return true;
     }
+    return false;
+    //
+    // auto a = Lcg::randIntRange(900, 20, 20);
+    // auto b = Lcg::randIntRange(650, 20, 20);
+    // auto c = Lcg::randIntRange(350, 20, 20);
+    // auto ca = Lcg::randIntRange(350, 20, 20);
+    // Lcg::randMainJumpFlexible(8);
+    // if (Lcg::randMain(6) != 0) {
+    //     return false;
+    // }
+    // if (Lcg::randMain(2) != 1) {
+    //     return false;
+    // }
     // Lcg::randMainJumpFlexible(7);
     // if (Lcg::randMain(32) != 0) {
     //     return false;
@@ -428,7 +439,6 @@ bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
     // if (Lcg::randMain(2) != 1) {
     //     return false;
     // }
-
 
 
     // if (b > c) {
@@ -480,14 +490,25 @@ int main() {
     auto t0 = std::chrono::high_resolution_clock::now();
     uint32_t base1 = 0x7e9056a0;
 
+    std::cout << mem[DynamicOffset(0 * 0xc + 0x20)] << std::endl;
+    std::cout << mem[DynamicOffset(1 * 0xc + 0x20)] << std::endl;
+    std::cout << mem[DynamicOffset(2 * 0xc + 0x20)] << std::endl;
+    std::cout << mem[DynamicOffset(3 * 0xc + 0x20)] << std::endl;
+    std::cout << mem[DynamicOffset(4 * 0xc + 0x20)] << std::endl;
+    std::cout << mem[DynamicOffset(5 * 0xc + 0x20)] << std::endl;
+    std::cout << mem[DynamicOffset(6 * 0xc + 0x20)] << std::endl;
+    std::cout << mem[DynamicOffset(7 * 0xc + 0x20)] << std::endl;
+    std::cout << mem[DynamicOffset(8 * 0xc + 0x20)] << std::endl;
+    std::cout << mem[DynamicOffset(9 * 0xc + 0x20)] << std::endl;
+    //    return false;
 
     std::unordered_set<uint32_t> known_values;
 
-
+    //EmulationMain(2192146089ul, false, false, false);
 #ifndef DEBUG
     for (int y = 2000; y < 2099; ++y) {
-        for (int m = 1; m < 12; ++m) {
-            for (int d = 1; d < 28; ++d) {
+        for (int m = 1; m < 2; ++m) {
+            for (int d = 9; d < 10; ++d) {
                 for (int h = 0; h < 23; ++h) {
                     for (int min = 0; min < 59; ++min) {
                         std::uint32_t encodedDate2 = DeteUtility::encodeDate(y, m, d);
