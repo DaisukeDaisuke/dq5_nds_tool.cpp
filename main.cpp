@@ -412,11 +412,7 @@ bool EmulationMain(uint32_t seed, bool adams, bool doodian, bool A) {
     }
     Lcg::randMainNop();
 
-    if (tomadoi && enc1GId == 38 && enc1GCount == 1 && enc2GId == 58 && enc2GCount == 1) {
-        return true;
-    }
-
-    if (tomadoi && enc1GId == 58 && enc1GCount == 1 && enc2GId == 32 && enc2GCount == 1) {
+    if (tomadoi && enc1GId == 38 && enc1GCount == 4 && enc2GId == 0) {
         return true;
     }
     return false;
@@ -507,8 +503,8 @@ int main() {
     //EmulationMain(2192146089ul, false, false, false);
 #ifndef DEBUG
     for (int y = 2000; y < 2099; ++y) {
-        for (int m = 1; m < 2; ++m) {
-            for (int d = 9; d < 10; ++d) {
+        for (int m = 1; m < 12; ++m) {
+            for (int d = 1; d < 30; ++d) {
                 for (int h = 0; h < 23; ++h) {
                     for (int min = 0; min < 59; ++min) {
                         std::uint32_t encodedDate2 = DeteUtility::encodeDate(y, m, d);
